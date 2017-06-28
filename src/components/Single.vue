@@ -1,20 +1,17 @@
 <template>
   <div class="map-item">
-    <div class="map-control map-control--right">
-      <el-form inline>
-        <el-form-item label="Geographic Level">
-          <el-radio-group size="small" v-model="geounit" @change="onControlUpdate">
-            <el-radio-button v-for="item in geounits"
-              :title="item.desc" :key="item.name" :label="item.name" :value="item.name">
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="map-control">
-      <el-form inline>
-      <el-form-item label="Select Variable">
+    <m2m-control class="map-control--right">
+      <el-form-item label="">
+        <el-radio-group size="small" v-model="geounit" @change="onControlUpdate">
+          <el-radio-button v-for="item in geounits"
+            :title="item.desc" :key="item.name" :label="item.name" :value="item.name">
+            {{ item.label }}
+          </el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+    </m2m-control>
+    <m2m-control>
+      <el-form-item>
         <el-select class="select-variable" v-model="variable" filterable size="small"
           @change="onControlUpdate" placeholder="Type to search">
           <el-option-group v-for="group in variables"
@@ -25,13 +22,28 @@
           </el-option-group>
         </el-select>
       </el-form-item>
-    </el-form>
+    </m2m-control>
+    <!-- Sync move -->
+    <div class="map-control-wrap map-control--right map-control--row2">
+      <m2m-control v-if="hasSiblings">
+          <el-form-item class="el-form-item--hover-label" label="Sync">
+            <el-switch on-text="ON" off-text="OFF" v-model="syncMove"></el-switch>
+          </el-form-item>
+      </m2m-control>
+      <m2m-control class="map-number-control">
+        <el-button title="Remove current pane" @click="removeSelf" v-if="hasSiblings" size="small">
+          <i class="el-icon-close"></i>
+        </el-button><el-button title="Add a map pane" @click="addSibling" size="small">
+          <i class="el-icon-plus"></i>
+        </el-button>
+      </m2m-control>
     </div>
     <v-map
       ref="map"
       v-loading="loading"
       @l-dragend="onMapUpdate"
       @l-zoomend="onZoomChange"
+      @l-drag="onMove"
       :options="mapOptions"
       :zoom="config.zoom" :center="config.center">
       <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
@@ -68,13 +80,15 @@ import {
   geounits, getVariables,
   getGeoData, findVariable, getFormat
 } from '@/components/api'
+import MapControl from "./control"
 import { color as d3color } from 'd3-color'
 import { colorize, getTileProvider } from '@/components/utils'
 import _ from 'lodash'
 
 export default {
-  props: ['config'],
+  props: ['config', 'has-siblings'],
   components: {
+    "m2m-control": MapControl
   },
   data () {
 
@@ -108,8 +122,8 @@ export default {
         zoomDelta: 0.5,
         zoomAnimationThreshold: 6,
         maxBounds: L.latLngBounds(
-          L.latLng(43.57649597170367, -67.17797113214105),
-          L.latLng(40.584941790941166, -75.74663448277443),
+          L.latLng(44, -67),
+          L.latLng(40, -76),
         )
       },
       geojsonOptions: {
@@ -211,7 +225,7 @@ export default {
         }
       })
       return colors
-    }
+    },
   },
   watch: {
     ['config.geounit'] () {
@@ -257,7 +271,7 @@ export default {
       if (!this.hovering) {
         this.lastHoverTarget = null
       }
-    }, 2000),
+    }, 1000),
 
     /**
      * Generate tooltip based on current zoom level
@@ -357,6 +371,16 @@ export default {
       }
       return ret
     },
+    panTo (...args) {
+      this.$refs.map.mapObject.panTo(...args)
+    },
+    setView (...args) {
+      this.$refs.map.mapObject.setView(...args)
+    },
+    redraw () {
+      this.$refs.map.mapObject._onResize()
+    },
+
     /**
      * Get the values stored in geojson features
      */
@@ -402,6 +426,12 @@ export default {
       this.onMapUpdate(e)
     },
 
+    onMove (e) {
+      if (this.syncMove) {
+        this.$emit('syncMove', e, this)
+      }
+    },
+
     /**
      * Map updated; change location in url
      */
@@ -430,9 +460,21 @@ export default {
      */
     updateURL (to, from) {
       this.$emit('updateURL', to, from, this)
+    },
+
+    addSibling (to, from) {
+      this.$emit('addSibling', this)
+    },
+
+    removeSelf (to, from) {
+      this.$emit('removeSelf', this)
     }
+
   },
   mounted () {
+    // add zoom controls
+    L.control.zoom({ position: 'bottomright' })
+      .addTo(this.$refs.map.mapObject)
     this.loadPolygons()
   }
 }

@@ -3,7 +3,11 @@
     <m2m-map v-for="config in configs"
       :class="'map-' + config.id"
       :config="config" :key="config.id"
+      :has-siblings="configs.length > 1"
+      @syncMove="syncMove"
       @updateURL="updateURL"
+      @addSibling="addItem"
+      @removeSelf="removeItem"
       ></m2m-map>
   </div>
 </template>
@@ -31,8 +35,13 @@ export default {
   },
   methods: {
     readParams (route) {
-      this.configs = parseParams(route || this.$route)
+      this.configs = this.parseParams(route)
     },
+
+    parseParams (route) {
+      return parseParams(route || this.$route)
+    },
+
     updateURL (to, from, ctx) {
       let configs = [...this.configs]
 
@@ -40,27 +49,81 @@ export default {
         configs = configs.map(item => {
           return {
             ...item,
+            // both geounit and map location state
+            // are syncable
+            geounit: to.geounit,
             zoom: to.zoom,
             center: to.center
           }
         })
       }
-
       configs[to.id] = { ...from, ...to }
+
+      this.updateRoute(configs)
+    },
+
+    /**
+     * Update current URL.
+     * url should be the only source of truth.
+     */
+    updateRoute (configs, method="replace") {
       let route = {
         name: 'main',
         params: encodeConfigs(configs)
       }
-      let method = 'replace'
       router[method](route)
+    },
+
+    syncMove (e, ctx) {
+      // don't do real time sync
+      // if there are too many children
+      if (this.configs.length > 2) {
+        return;
+      }
+      let id = ctx.config.id
+      let center = e.target.getCenter()
+      let zoom = e.target.getZoom()
+      this.$children.forEach(item => {
+        if (item === ctx) return
+        item.config.center = center
+        item.config.zoom = zoom
+      })
+    },
+
+    addItem (ctx) {
+      let config = ctx.config
+      // clone a new configs list
+      let configs = [...this.configs]
+      // clone current configs
+      configs.splice(ctx.config.id, 0, ctx.config)
+      this.updateRoute(configs)
+    },
+
+    removeItem (ctx) {
+      let configs = this.configs.filter(item => {
+        return item.id != ctx.config.id
+      })
+      this.updateRoute(configs)
     }
+
   },
+
   created () {
     this.readParams()
   },
   watch: {
     '$route': function(to, from) {
-      this.readParams(to)
+      let toConfigs = this.parseParams(to)
+      let fromConfigs = this.parseParams(from)
+
+      // update configs
+      this.configs = toConfigs
+
+      if (fromConfigs.length != toConfigs.length) {
+        this.$children.forEach(item => {
+          item.redraw()
+        })
+      }
     }
   },
   mounted () {

@@ -1,4 +1,6 @@
 
+$control_index: 402;
+
 body
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
   font-weight: 400;
@@ -9,41 +11,94 @@ body, html, #app, .map-container, .map-item
   height: 100%;
   margin: 0;
 
+.leaflet-container
+  background-color: rgb(205,210,212);
+
 .map-control, .map-info, .map-legend
   position: absolute;
-  z-index: 402;
+  z-index: $control_index;
   background-color: rgba(255,255,255,0.95);
   box-shadow: 0 1px 7px rgba(0,0,0,0.1);
   border-radius: 4px;
 
+.map-control .map-control
+  position: static;
+  display: inline-block;
+  margin-right: 10px;
+
+.el-input--small .el-input__inner
+  height: 28px;
+
 .map-control
   left: 12px;
   top: 12px;
-  .el-form--inline
-    padding: 10px 5px 9px 15px;
-    text-align: right;
+  padding: 10px;
   .el-form-item
     position: relative;
-    margin-bottom: 0;
-  .el-form-item__label
-    display: none;
+    margin: 0;
+  .el-form--inline
     text-align: right;
-    padding: 0;
-    position: absolute;
-    top: 0;
-    text-align: left;
-    width: auto;
-    color: #989a9f;
-    font-size: 12px;
+  .el-form-item__content
+    line-height: 1;
+  .el-form-item--hover-label
+    .el-form-item__label
+      display: none;
+      padding: 0 10px 0 0;
+    &:hover .el-form-item__label
+      display: inline-block;
+  .el-form-item--has-label
+    padding-top: 15px;
+    position: relative;
+    .el-form-item__label
+      text-align: right;
+      padding: 0;
+      position: absolute;
+      top: 5px;
+      text-align: left;
+      width: auto;
+      color: #989a9f;
+      font-size: 12px;
   .select-variable
     width: 16em;
+
+.map-number-control
+  width: 42px;
+  vertical-align: top;
+  text-align: center;
+  padding: 3px 0;
+  .el-button
+    border-width: 0;
+    border-top-width: 1px;
+    border-radius: 0;
+    border-color: #ddd;
+    padding: 12px 15px;
+    margin: 0;
+    display: none;
+    &:first-child
+      border: 0;
+      display: block;
+  &:hover .el-button
+    display: block;
+
+
+.map-control-wrap
+  position: absolute;
+  z-index: $control_index;
+
+.map-control-wrap .map-control
+  position: static;
+  display: inline-block;
 
 .map-control--right
   right: 12px;
   left: auto;
+  .el-form
+    text-align: right;
+.map-control--row2
+  top: 80px;
 
 .el-loading-mask
-  z-index: 999;
+  z-index: $control_index + 1;
   background-color: rgba(255,255,255,.5);
 
 // .el-select-dropdown
@@ -56,6 +111,9 @@ table
 h4, h5
   margin: 0.4em 0 0.4em;
   line-height: 1.3;
+
+.leaflet-top, .leaflet-bottom, .leaflet-control
+  z-index: $control_index
 
 .map-item .leaflet-tooltip
   padding: 5px;
@@ -104,7 +162,7 @@ h4, h5
   position: absolute;
   left: 0;
   right: 0;
-  z-index: 401;
+  z-index: $control_index;
   top: 19px;
   height: 0;
   overflow: visible;
@@ -113,7 +171,7 @@ h4, h5
   display: inline-block;
   position: static;
   font-size: 14px;
-  z-index: 1999;
+  z-index: $control_index;
   padding: 10px;
   border-radius: 4px;
   color: #ccc;
@@ -121,11 +179,24 @@ h4, h5
     color: #333;
 
 // side by side
-.sbs-2
+.sbs-2, .sbs-3, .sbs-4
   .map-item
     width: 50%;
     float: left;
+    box-sizing: border-box;
   .map-info-wrap
     left: 12px;
     text-align: left;
     top: 80px;
+.sbs-3
+  .select-variable
+    width: 14em;
+  .map-item
+    width: 33.333%;
+.sbs-4
+  .map-item
+    height: 50%;
+  .map-0, .map-1
+    border-bottom: 1px solid #ccc;
+  .map-0, .map-3
+    border-right: 1px solid #ccc;

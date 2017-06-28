@@ -5,9 +5,9 @@ import Vuex from 'vuex'
 import ElementUI from 'element-ui'
 import Vue2Leaflet from 'vue2-leaflet'
 
-import '../theme/index.css'
-import './theme/index.sass'
 import 'leaflet/dist/leaflet.css'
+import './theme/index.sass'
+import '../theme/index.css'
 
 Vue.config.productionTip = false
 Vue.component('v-map', Vue2Leaflet.Map);

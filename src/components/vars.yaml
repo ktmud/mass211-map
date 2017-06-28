@@ -99,7 +99,7 @@ variables:
 # -- tile prodivers for map
 tileProviders:
   mapbox-light:
-    url: 'https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3RtdWQiLCJhIjoiY2o0ZXh6MDJvMTFkdzJ3czR1d29kbG94eiJ9.Wnd4jwb1-JhWsdaqcP47AA'
+    url: 'https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3RtdWQiLCJhIjoiY2o0ZXh6MDJvMTFkdzJ3czR1d29kbG94eiJ9.Wnd4jwb1-JhWsdaqcP47AA'
     attribution: '&copy; <a href="https://www.mapbox.com/about/maps/" target="_blank">Mapbox</a><span> &copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
   carto-light:
     url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}@2x.png'

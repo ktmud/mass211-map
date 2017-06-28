@@ -72,18 +72,22 @@ function reptail (...lists) {
   return maxlen
 }
 
+
+const DEFAULT_CENTER = '42.0498619443,-71.6507286010'
 /**
  * Parase route params to be a list of configs
  * for multiple maps
  */
 export const parseParams = (route) => {
-  var params = route.params
-  var geounits = splitPlus(params.geounit, DEFAULT_UNIT)
-  var variables = splitPlus(params.variable, DEFAULT_VAR)
-  var locations = parseLocations(params.location, '@42.0709703658,-71.5632934000,8.5z')
-  var maxlen = reptail(geounits, variables, locations)
-  var ret = []
-  for (var i = 0, l = maxlen; i < l; i++) {
+  let params = route.params
+  let geounits = splitPlus(params.geounit, DEFAULT_UNIT)
+  let variables = splitPlus(params.variable, DEFAULT_VAR)
+  let n = Math.max(geounits.length, variables.length) // number of maps
+  let zoom = (9.5 - 0.8 * n).toFixed(1)
+  let locations = parseLocations(params.location, `@${DEFAULT_CENTER},${zoom}z`)
+  let maxlen = reptail(geounits, variables, locations)
+  let ret = []
+  for (let i = 0, l = maxlen; i < l; i++) {
     ret.push({
       // assign each config an id, vue needs it to track
       // and reuse node
