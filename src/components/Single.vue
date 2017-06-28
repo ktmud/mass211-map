@@ -31,7 +31,7 @@
       ref="map"
       v-loading="loading"
       @l-dragend="onMapUpdate"
-      @l-zoomend="onMapUpdate"
+      @l-zoomend="onZoomChange"
       :options="mapOptions"
       :zoom="config.zoom" :center="config.center">
       <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
@@ -87,9 +87,15 @@ export default {
       variable: this.config.variable,
 
       tile: getTileProvider(),
+
+      lastBounds: null,
       lastClickTarget: null,
       lastHoverTarget: null,
       hovering: false,
+      // whether zoomed big enough
+      // that the tooltip should be expanded
+      // mode
+      bigMode: this.config.zoom > this.ZOOM_BIG,
 
       mapOptions: {
         // wheelDebounceTime: 20,
@@ -115,7 +121,7 @@ export default {
         },
         onEachFeature: (feature, layer) => {
            if (feature.properties) {
-             layer.bindTooltip(this.tooltip(feature.properties))
+             layer.bindTooltip(this.tooltip(feature))
              layer.on({
                mouseover: this.onHoverFeature,
                mouseout: this.onLeaveFeature,
@@ -127,6 +133,13 @@ export default {
     }
   },
   computed: {
+
+    ZOOM_BIG () {
+      if (this.geounit == 'county') {
+        return 9.5
+      }
+      return 10
+    },
 
     /**
      * The variables based on geounit
@@ -246,14 +259,14 @@ export default {
     /**
      * Generate tooltip based on current zoom level
      */
-    tooltip (item) {
-      if (this.config.zoom > 9) {
+    tooltip (feature) {
+      let item = feature.properties
+      if (this.getZoom() > this.ZOOM_BIG) {
         return this.fullTooltip(item)
       } else {
         return this.simpleTooltip(item)
       }
     },
-
     simpleTooltip (item) {
       return item.name
     },
@@ -283,15 +296,40 @@ export default {
             </table>
         </div>`
     },
-    zoomIn (target) {
-      let tooltip = this.fullTooltip(target.feature.properties)
-      target.bindTooltip(tooltip)
-      this.setBounds(target.getBounds())
+    updateTooltip: _.debounce(function () {
+      let update = false
+      // only update when zoom level
+      // switched between big and small
+      if (this.getZoom() > this.ZOOM_BIG) {
+        if (!this.bigMode) {
+          this.bigMode = true
+          update = true
+        }
+      } else {
+        if (this.bigMode) {
+          this.bigMode = false
+          update = true
+        }
+      }
+      if (update) {
+        this.$refs.geojson.$geoJSON.eachLayer((layer) => {
+          layer.bindTooltip(this.tooltip(layer.feature))
+        })
+      }
+    }, 600),
+
+    zoomIn (e) {
+      if (this.getZoom() < this.ZOOM_BIG) {
+        this.lastBounds = this.getBounds()
+      }
+      this.setBounds(e.target.getBounds())
     },
-    zoomOut (target) {
-      let tooltip = this.simpleTooltip(target.feature.properties)
-      target.bindTooltip(tooltip)
-      this.setZoom(8.8)
+    zoomOut (e) {
+      if (this.lastBounds) {
+        this.setBounds(this.lastBounds)
+      } else {
+        this.setBounds(this.$refs.geojson.getBounds())
+      }
     },
     setBounds (bounds) {
       this.$refs.map.setBounds(bounds)
@@ -349,17 +387,22 @@ export default {
     zoomToFeature (e) {
       if (e.target == this.lastClickTarget) {
         this.lastClickTarget = null
-        this.zoomOut(e.target)
+        this.zoomOut(e)
       } else {
         this.lastClickTarget = e.target
-        this.zoomIn(e.target)
+        this.zoomIn(e)
       }
+    },
+
+    onZoomChange (e) {
+      this.updateTooltip()
+      this.onMapUpdate(e)
     },
 
     /**
      * Map updated; change location in url
      */
-    onMapUpdate (e) {
+    onMapUpdate: _.debounce(function (e) {
       let from = this.config
       let to = {
         ...from,
@@ -367,7 +410,7 @@ export default {
         zoom: Math.round(this.getZoom() * 10) / 10
       }
       this.updateURL(to, from)
-    },
+    }, 200),
 
     onControlUpdate (e) {
       var from = this.config
