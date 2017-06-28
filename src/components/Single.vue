@@ -97,6 +97,9 @@ export default {
       // mode
       bigMode: this.config.zoom > this.ZOOM_BIG,
 
+      // whether to sync moves between different maps
+      syncMove: true,
+
       mapOptions: {
         // wheelDebounceTime: 20,
         // wheelPxPerZoomLevel: 100,

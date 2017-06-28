@@ -67,6 +67,7 @@ export const getGeoData = (level) => {
         resolve(data)
       }, reject)
   })
+  cache[level] = promise
   return promise
 }
 

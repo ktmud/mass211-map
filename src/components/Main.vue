@@ -35,6 +35,17 @@ export default {
     },
     updateURL (to, from, ctx) {
       let configs = [...this.configs]
+
+      if (ctx.syncMove) {
+        configs = configs.map(item => {
+          return {
+            ...item,
+            zoom: to.zoom,
+            center: to.center
+          }
+        })
+      }
+
       configs[to.id] = { ...from, ...to }
       let route = {
         name: 'main',
