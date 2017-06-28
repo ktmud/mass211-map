@@ -70,7 +70,8 @@ variables:
       - name: UnempRate
         label: Unemployment Rate
       - name: GINI
-        label: GINI index
+        label: Gini coefficient
+        format: '.4f'
       - name: White
         label: 'White'
         desc: Percentage of white population (2015)
