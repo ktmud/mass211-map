@@ -1,0 +1,114 @@
+# available geographical levels
+levels:
+  - label: County
+  - label: Town
+  - label: 'ZIP Code'
+    name: zip
+
+# available variables in the GeoJSON
+variables:
+  - label: '211 Calls'
+    options:
+      - name: p_call
+        label: 'Total calls per 1,000 people'
+        desc: 'Number of 211 calls per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
+      - name: p_call_childcare
+        label: 'for Child Care'
+        desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
+      - name: p_call_health
+        label: 'for Health Care'
+      - name: p_call_employment
+        label: 'for Employment'
+        desc: 'Help me find a job'
+      - name: p_call_shelter
+        label: 'for Housing/Shelter'
+      - name: p_call_mental
+        label: 'for Mental Health Issues'
+      - name: p_call_utilities
+        label: 'for Utilities'
+        desc: 'Number of 211 calls asking for help with utility bills or service inquiries'
+      - name: p_call_income
+        label: 'for Income Maitanence'
+        desc: 'Number of 211 calls for basic income or basic needs expense assistance.'
+
+  - label: 'Public Health'
+    requires:
+      town: 1
+    options:
+      - name: fertility
+        label: Fertility rate
+        format: ',.0f'
+        desc: "Births per 1,000 women ages 15 to 44 in the year of 2010"
+        units: per 1,000 women
+      - name: fertility_black
+        format: ',.0f'
+        label: Fertility among black women
+      - name: fertility_white
+        format: ',.0f'
+        label: Fertility among white women
+      - name: infantmortality
+        format: ',.0f'
+        label: Infant Mortality
+      - name: moms_no_care
+        label: Lack prenatal care
+        desc: Mothers not receiving prenatal care in first trimester
+      - name: moms_pub_care
+        label: Public funded prenatal care
+        desc: Mothers receiving public funded prenatal care
+
+  - label: Demographics (2015 Census Data)
+    options:
+      - name: MedHouseIncome
+        label: Median house income
+        format: '$,.2s'
+      - name: BelowPoverty
+        label: Below poverty
+        desc: Percentage of people earning below poverty line
+      - name: AtLeastBachelor
+        label: Higher education rate
+        desc: Percentage of people with at least a Bachelor degree
+      - name: UnempRate
+        label: Unemployment Rate
+      - name: GINI
+        label: GINI index
+      - name: White
+        label: 'White'
+        desc: Percentage of white population (2015)
+      - name: Black
+        label: 'Black'
+      - name: Hispanic
+        label: 'Hispanic'
+      - name: Asian
+        label: 'Asian'
+      - name: Female
+        label: 'Female'
+      - name: Male
+      - name: AgeU5
+        label: Small Children (Age < 5)
+      - name: Age517
+        label: Children (5 ≤ Age ≤ 17)
+      - name: TotalPop
+        label: Total Population
+        format: ',.0f'
+        units: people
+      - name: PopDen
+        label: Population Density
+        format: ',.0f'
+        unitsShort: ' / mi<sup>2</sup>'
+
+# -- tile prodivers for map
+tileProviders:
+  mapbox-light:
+    url: 'https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3RtdWQiLCJhIjoiY2o0ZXh6MDJvMTFkdzJ3czR1d29kbG94eiJ9.Wnd4jwb1-JhWsdaqcP47AA'
+    attribution: '&copy; <a href="https://www.mapbox.com/about/maps/" target="_blank">Mapbox</a><span> &copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+  carto-light:
+    url: 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+    subdomains: 'abcd'
+    maxZoom: 19
+  osm:
+    attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  opentopo:
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'

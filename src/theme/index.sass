@@ -1,0 +1,127 @@
+
+body
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+  font-weight: 400;
+
+body, html, #app, .map-container, .map-item
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+
+.map-control, .map-info, .map-legend
+  position: absolute;
+  z-index: 402;
+  background-color: rgba(255,255,255,0.9);
+  box-shadow: 0 1px 7px rgba(0,0,0,0.1);
+  border-radius: 4px;
+
+.map-control
+  left: 12px;
+  top: 12px;
+  .el-form--inline
+    padding: 10px 5px 9px 15px;
+    text-align: right;
+  .el-form-item
+    position: relative;
+    margin-bottom: 0;
+  .el-form-item__label
+    display: none;
+    text-align: right;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    text-align: left;
+    width: auto;
+    color: #989a9f;
+    font-size: 12px;
+  .select-variable
+    width: 16em;
+
+.map-control--right
+  right: 12px;
+  left: auto;
+
+.el-loading-mask
+  z-index: 999;
+  background-color: rgba(255,255,255,.5);
+
+// .el-select-dropdown
+//   transition-duration: 0.2s;
+
+table
+  border-collapse: collapse;
+  border-spacing: 0;
+
+h4, h5
+  margin: 0.4em 0 0.4em;
+  line-height: 1.3;
+
+.map-item .leaflet-tooltip
+  padding: 5px;
+  &:before
+    display: none;
+
+.item-detail
+  h4
+    text-align: center;
+    background: #f3f3f3;
+    padding: 5px 0;
+    margin-bottom: 0.6em;
+    margin-top: 0;
+  th, td
+    padding: 0 5px;
+  th
+    font-weight: normal;
+    text-align: right;
+
+.map-legend
+  color: #666;
+  border-radius: 4px;
+  text-align: left;
+  left: 12px;
+  bottom: 12px;
+  padding: 10px;
+  max-width: 120px;
+  p
+    margin: 10px 0 0;
+    line-height: 1.4;
+    font-size: 12px;
+  td
+    line-height: 0;
+    padding: 0;
+    text-align: right;
+  i
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+  .note
+    color: #999;
+
+.map-info-wrap
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 401;
+  top: 19px;
+  height: 0;
+  overflow: visible;
+
+.map-info
+  display: inline-block;
+  position: static;
+  font-size: 14px;
+  z-index: 1999;
+  padding: 10px;
+  border-radius: 4px;
+  color: #ccc;
+  span, strong
+    color: #333;
+
+// side by side
+.sbs-2
+  .map-item
+    width: 50%;
+    float: left;
