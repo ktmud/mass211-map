@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import ga from 'vue-ga'
+
+
 import { DEFAULT_VAR, DEFAULT_UNIT } from '@/components/api'
 import Home from '@/components/Home'
 import Main from '@/components/Main'
@@ -21,6 +24,8 @@ const router = new Router({
     }
   ]
 })
+ga(router, 'UA-1080811-22')
+
 
 /**
  * Split "a+b" to ['a', 'b']
@@ -75,7 +80,7 @@ export const parseParams = (route) => {
   var params = route.params
   var geounits = splitPlus(params.geounit, DEFAULT_UNIT)
   var variables = splitPlus(params.variable, DEFAULT_VAR)
-  var locations = parseLocations(params.location, '@42.0768030401,-71.5758452224,8.7z')
+  var locations = parseLocations(params.location, '@42.0709703658,-71.5632934000,8.5z')
   var maxlen = reptail(geounits, variables, locations)
   var ret = []
   for (var i = 0, l = maxlen; i < l; i++) {
