@@ -10,7 +10,7 @@
 import { tileProviders } from './vars.yaml'
 import api from './api'
 
-const DEFAULT_TILE = 'mapbox-light'
+const DEFAULT_TILE = 'carto-light'
 export const getTileProvider = (name = DEFAULT_TILE) => {
   // fallback to carto-light
   return tileProviders[name] || tileProdivers[DEFAULT_TILE]
