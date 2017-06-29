@@ -25,27 +25,20 @@
     </m2m-control>
     <!-- Sync move -->
     <div class="map-control-wrap map-control--right map-control--row2">
-      <m2m-control v-if="hasSiblings">
+      <m2m-control v-if="totalMaps > 1">
           <el-form-item class="el-form-item--hover-label" label="Sync">
             <el-switch on-text="ON" off-text="OFF" v-model="syncMove"></el-switch>
           </el-form-item>
       </m2m-control>
       <m2m-control class="map-number-control">
-        <el-button title="Remove current pane" @click="removeSelf" v-if="hasSiblings" size="small">
+        <el-button v-if="totalMaps > 1" title="Remove current pane" @click="removeSelf" size="small">
           <i class="el-icon-close"></i>
-        </el-button><el-button title="Add a map pane" @click="addSibling" size="small">
+        </el-button><el-button v-if="totalMaps < 4" title="Add a map pane" @click="addSibling" size="small">
           <i class="el-icon-plus"></i>
         </el-button>
       </m2m-control>
     </div>
-    <v-map
-      ref="map"
-      v-loading="loading"
-      @l-dragend="onMapUpdate"
-      @l-zoomend="onZoomChange"
-      @l-drag="onMove"
-      :options="mapOptions"
-      :zoom="config.zoom" :center="config.center">
+    <v-map ref="map" v-loading="loading" :options="mapOptions">
       <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
       <v-geojson-layer ref="geojson" :geojson="geojson" :options="geojsonOptions"></v-geojson-layer>
       <div class="map-info-wrap">
@@ -60,7 +53,7 @@
       </div>
       <div class="map-legend" v-if="!loading">
         <h5>{{ meta.legend || meta.label }}</h5>
-        <table>
+        <table v-if="legendColors">
           <tr v-for="(item, index) in legendColors" :key="index">
             <td class="color">
               <i :style="'background-color: ' + item.color"></i>
@@ -81,14 +74,16 @@ import {
   getGeoData, findVariable, getFormat
 } from '@/components/api'
 import MapControl from "./control"
+import VMap from "./map"
 import { color as d3color } from 'd3-color'
 import { colorize, getTileProvider } from '@/components/utils'
 import _ from 'lodash'
 
 export default {
-  props: ['config', 'has-siblings'],
+  props: ['config', 'total-maps'],
   components: {
-    "m2m-control": MapControl
+    "m2m-control": MapControl,
+    'v-map': VMap,
   },
   data () {
 
@@ -97,8 +92,6 @@ export default {
       geojson: [],
       loading: true,
       geounits: geounits,
-      geounit: this.config.geounit,
-      variable: this.config.variable,
 
       tile: getTileProvider(),
 
@@ -115,14 +108,16 @@ export default {
       syncMove: true,
 
       mapOptions: {
-        // wheelDebounceTime: 20,
+        center: this.config.center,
+        zoom: this.config.zoom,
+        wheelDebounceTime: 100,
         // wheelPxPerZoomLevel: 100,
         zoomControl: false,
         zoomSnap: 0.1,
         zoomDelta: 0.5,
         zoomAnimationThreshold: 6,
         maxBounds: L.latLngBounds(
-          L.latLng(44, -67),
+          L.latLng(45, -67),
           L.latLng(40, -76),
         )
       },
@@ -156,6 +151,34 @@ export default {
         return 9.5
       }
       return 10
+    },
+
+    updateView () {
+      return _.debounce(function () {
+        this.setView(this.config.center, this.config.zoom)
+      }, 10)
+    },
+
+    geounit: {
+      get () {
+        return this.config.geounit
+      },
+      set (val) {
+        this.config.geounit = val
+      }
+    },
+
+    variable: {
+      get () {
+        return this.config.variable
+      },
+      set (val) {
+        this.config.variable = val
+      }
+    },
+
+    variableAvail () {
+      return !this.meta.requires|| (this.geounit in this.meta.requires)
     },
 
     /**
@@ -194,7 +217,7 @@ export default {
     },
     infoItem () {
       let item = this.lastHoverTarget
-      if (!item || !item.feature.properties) return null
+      if (!this.variableAvail || !item || !item.feature.properties) return null
       let ret = item.feature.properties
       let prefix = this.geounit == 'zip' ? 'MA' : ''
       let suffix = this.geounit == 'county' ? 'County' : ''
@@ -202,6 +225,9 @@ export default {
       return ret
     },
     fillColor () {
+      if (!this.variableAvail) {
+        return (item) => '#eee'
+      }
       var variable = this.config.variable
       var color = colorize(this.logvals)
       var ret = (item) => {
@@ -214,6 +240,9 @@ export default {
       return ret
     },
     legendColors () {
+      if (!this.variableAvail) {
+        return null
+      }
       let vals = this.fillColor.ticks(5)
       let colors = vals.map(x => {
         // revert to original values
@@ -226,6 +255,10 @@ export default {
       })
       return colors
     },
+
+    mapObject () {
+      return this.$refs.map.mapObject
+    }
   },
   watch: {
     ['config.geounit'] () {
@@ -234,13 +267,19 @@ export default {
     ['config.variable'] () {
       this.checkVariableValidity()
       this.resetStyle()
-    }
+    },
+    ['config.center'] (to) {
+      this.updateView()
+    },
+    ['config.zoom'] (to) {
+      this.updateView()
+    },
   },
   methods: {
 
     loadPolygons () {
       this.loading = true
-      getGeoData(this.config.geounit)
+      getGeoData(this.geounit)
         .then(data => {
           this.geojson = data
           this.loading = false
@@ -249,9 +288,10 @@ export default {
     },
 
     checkVariableValidity () {
-      if (this.meta.requires && !(this.geounit in this.meta.requires)) {
+      if (!this.variableAvail) {
         this.$message({
           message: 'Variable not supported at this level.',
+          showClose: true,
           duration: 2000,
           type: 'error'
         });
@@ -349,36 +389,28 @@ export default {
       }
     },
     setBounds (bounds) {
-      this.$refs.map.setBounds(bounds)
+      this.setBounds(bounds)
     },
     getBounds () {
-      return this.$refs.map.mapObject.getBounds()
+      return this.mapObject.getBounds()
     },
     setZoom (zoom) {
-      this.$refs.map.mapObject.setZoom(zoom)
+      this.mapObject.setZoom(zoom)
     },
     getZoom () {
-      return this.$refs.map.mapObject.getZoom()
+      return this.mapObject.getZoom()
     },
-    getCenter (plain=true, round=false) {
-      let ret = this.$refs.map.mapObject.getCenter()
-      if (plain) {
-        if (round) {
-          ret = [ret.lat, ret.lng]
-        } else {
-          ret = [ret.lat.toFixed(10), ret.lng.toFixed(10)]
-        }
-      }
-      return ret
+    getCenter (target=null) {
+      return (target || this.mapObject).getCenter()
     },
     panTo (...args) {
-      this.$refs.map.mapObject.panTo(...args)
+      this.mapObject.panTo(...args)
     },
     setView (...args) {
-      this.$refs.map.mapObject.setView(...args)
+      this.mapObject.setView(...args)
     },
     redraw () {
-      this.$refs.map.mapObject._onResize()
+      this.mapObject._onResize()
     },
 
     /**
@@ -440,10 +472,11 @@ export default {
       let to = {
         ...from,
         center: this.getCenter(),
+        // handle float precision error
         zoom: Math.round(this.getZoom() * 10) / 10
       }
       this.updateURL(to, from)
-    }, 200),
+    }, 400),
 
     onControlUpdate (e) {
       var from = this.config
@@ -472,9 +505,15 @@ export default {
 
   },
   mounted () {
+    let map = this.mapObject
+
     // add zoom controls
-    L.control.zoom({ position: 'bottomright' })
-      .addTo(this.$refs.map.mapObject)
+    L.control.zoom({ position: 'bottomright' }).addTo(map)
+
+    map.on('dragend', (e) => this.onMapUpdate(e))
+    map.on('zoomend', (e) => this.onZoomChange(e))
+    map.on('mosuemove', (e) => this.onMove(e))
+
     this.loadPolygons()
   }
 }

@@ -53,19 +53,12 @@ export const getGeoData = (level) => {
       // if the object is too large, wait at least 100ms so that
       // the loading spinner can appear
       // var wait = cached.features.length > 400 ? 0 : 0;
-      // setTimeout(() => {
-      //   resolve(cache[level])
-      // }, wait)
-      resolve(cache[level])
-      return
+      return cache[level].then(resolve, reject)
     }
     var file = `/static/data/${level}.geojson`
     fetch(file)
       .then(response => response.json())
-      .then(data => {
-        cache[level] = data
-        resolve(data)
-      }, reject)
+      .then(resolve, reject)
   })
   cache[level] = promise
   return promise

@@ -3,7 +3,7 @@
     <m2m-map v-for="config in configs"
       :class="'map-' + config.id"
       :config="config" :key="config.id"
-      :has-siblings="configs.length > 1"
+      :total-maps="configs.length"
       @syncMove="syncMove"
       @updateURL="updateURL"
       @addSibling="addItem"
@@ -49,14 +49,17 @@ export default {
         configs = configs.map(item => {
           return {
             ...item,
-            // both geounit and map location state
-            // are syncable
+            // cannot use ...to here because not all
+            // states in config is syncable
+            // only geounit and map location state are
             geounit: to.geounit,
             zoom: to.zoom,
             center: to.center
           }
         })
       }
+      // will need this to update current pane's
+      // variable name
       configs[to.id] = { ...from, ...to }
 
       this.updateRoute(configs)
@@ -68,7 +71,6 @@ export default {
      */
     updateRoute (configs, method="replace") {
       let route = {
-        name: 'main',
         params: encodeConfigs(configs)
       }
       router[method](route)
@@ -85,8 +87,7 @@ export default {
       let zoom = e.target.getZoom()
       this.$children.forEach(item => {
         if (item === ctx) return
-        item.config.center = center
-        item.config.zoom = zoom
+        item.setView(center, zoom, { animate: false })
       })
     },
 
