@@ -117,8 +117,8 @@ export default {
         zoomDelta: 0.5,
         zoomAnimationThreshold: 6,
         maxBounds: L.latLngBounds(
-          L.latLng(43.2612, -69.4006),
-          L.latLng(40.8221, -74.2236),
+          L.latLng(43.7314, -68.5437),
+          L.latLng(40.4887, -75.1245),
         )
       },
       geojsonOptions: {
