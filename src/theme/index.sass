@@ -14,25 +14,34 @@ body, html, #app, .map-container, .map-item
 .leaflet-container
   background-color: rgb(205,210,212);
 
-.map-control, .map-info, .map-legend
+.map-control, .map-info, .map-control-wrap
   position: absolute;
   z-index: $control_index;
+.map-control, .map-info
   background-color: rgba(255,255,255,0.95);
   box-shadow: 0 1px 7px rgba(0,0,0,0.1);
   border-radius: 4px;
 
-.map-control .map-control
-  position: static;
-  display: inline-block;
-  margin-right: 10px;
-
-.el-input--small .el-input__inner
-  height: 28px;
-
-.map-control
+.map-control-wrap, .map-control
   left: 12px;
   top: 12px;
-  padding: 10px;
+  .map-control
+    position: static;
+    margin-right: 6px;
+    &:last-child
+      margin-right: 0;
+
+.map-control--inline .map-control
+  display: inline-block;
+  margin-right: 8px;
+
+.el-input--small .el-input__inner
+  height: 32px;
+
+.map-control-padded
+  padding: 5px 6px;
+
+.map-control
   .el-form-item
     position: relative;
     margin: 0;
@@ -43,7 +52,7 @@ body, html, #app, .map-container, .map-item
   .el-form-item--hover-label
     .el-form-item__label
       display: none;
-      padding: 0 10px 0 0;
+      padding: 0 5px 0 0;
     &:hover .el-form-item__label
       display: inline-block;
   .el-form-item--has-label
@@ -60,26 +69,37 @@ body, html, #app, .map-container, .map-item
       font-size: 12px;
   .select-variable
     width: 16em;
+  .select-geounit
+    width: 6.5em;
 
 .map-number-control
-  width: 42px;
   vertical-align: top;
   text-align: center;
-  padding: 3px 0;
+  padding: 0;
   .el-button
     border-width: 0;
+    border-radius: 4px;
     border-top-width: 1px;
-    border-radius: 0;
     border-color: #ddd;
-    padding: 12px 15px;
+    padding: 10px;
+    box-shadow: none;
     margin: 0;
     display: none;
     &:first-child
-      border: 0;
+      border-top-width: 0;
       display: block;
   &:hover .el-button
     display: block;
+    border-radius: 0;
+    &:first-child
+      border-radius: 4px 4px 0 0;
+    &:last-child
+      border-radius: 0 0 4px 4px;
+    &:last-child:first-child
+      border-radius: 4px;
 
+.el-switch__label
+  font-size: 13px;
 
 .map-control-wrap
   position: absolute;
@@ -122,48 +142,28 @@ h4, h5
 
 // hover tooltip for geojson features
 .item-detail
-  font-size: 13px;
+  font-size: 14px;
   h4
     text-align: center;
     background: #f3f3f3;
-    padding: 5px 0;
+    padding: 5px;
     margin-bottom: 0.6em;
     margin-top: 0;
+    font-weight: normal;
+    strong
+      font-weight: 600;
   th, td
     padding: 0 5px;
   th
     font-weight: normal;
     text-align: right;
 
-.map-legend
-  color: #666;
-  border-radius: 4px;
-  text-align: left;
-  left: 12px;
-  bottom: 12px;
-  padding: 10px;
-  max-width: 120px;
-  p
-    margin: 10px 0 0;
-    line-height: 1.4;
-    font-size: 12px;
-  td
-    line-height: 0;
-    padding: 0;
-    text-align: right;
-  i
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-  .note
-    color: #999;
-
 .map-info-wrap
   text-align: center;
   position: absolute;
   left: 0;
   right: 0;
+  padding: 0;
   z-index: $control_index;
   top: 19px;
   height: 0;
@@ -174,9 +174,10 @@ h4, h5
   position: static;
   font-size: 14px;
   z-index: $control_index;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 6px 12px;
   color: #ccc;
+  background: #fff;
+  border: 1px solid #ccc;
   span, strong
     color: #333;
 
@@ -186,15 +187,18 @@ h4, h5
     width: 50%;
     float: left;
     box-sizing: border-box;
+    border-right: 1px solid #ccc;
   .map-info-wrap
     left: 12px;
     text-align: left;
-    top: 80px;
+    top: 62px;
 .sbs-3
   .select-variable
     width: 14em;
   .map-item
     width: 33.333%;
+  .map-3
+    border-right: 0;
 .sbs-4
   .map-item
     height: 50%;
@@ -202,3 +206,45 @@ h4, h5
     border-bottom: 1px solid #ccc;
   .map-0, .map-3
     border-right: 1px solid #ccc;
+
+
+.map-legend
+  color: #666;
+  text-align: left;
+  left: 12px;
+  bottom: 12px;
+  top: auto;
+  width: 170px;
+  padding: 0;
+  .m2m-zoom-elem
+    padding: 6px 10px 10px;
+  p
+    margin: 10px 0 0;
+    line-height: 1.4;
+    font-size: 12px;
+  td
+    line-height: 0;
+    padding: 0;
+    text-align: right;
+  i.legend-box
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+  .note
+    color: #999;
+
+.m2m-zoom-toggler
+  text-align: center;
+  cursor: pointer;
+  padding: 2px;
+  border-bottom: 1px solid #eee;
+  .el-icon-arrow-up
+    transform: scaleX(1.6);
+.m2m-zoom-elem
+  overflow: hidden;
+.m2m-zoom-enter-active, .m2m-zoom-leave-active
+  transition: all .5s ease;
+.m2m-zoom-leave-active
+  max-height: 0;
+

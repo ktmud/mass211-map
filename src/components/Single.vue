@@ -1,33 +1,35 @@
 <template>
   <div class="map-item">
-    <m2m-control class="map-control--right">
-      <el-form-item label="">
-        <el-radio-group size="small" v-model="geounit" @change="onControlUpdate">
-          <el-radio-button v-for="item in geounits"
-            :title="item.desc" :key="item.name" :label="item.name" :value="item.name">
-            {{ item.label }}
-          </el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-    </m2m-control>
-    <m2m-control>
-      <el-form-item>
-        <el-select class="select-variable" v-model="variable" filterable size="small"
-          @change="onControlUpdate" placeholder="Type to search">
-          <el-option-group v-for="group in variables"
-            :key="group.label" :label="group.label">
-            <el-option v-for="item in group.options" :key="item.name"
-              :label="item.label" :value="item.name">
+    <div class="map-control-wrap">
+      <m2m-control class="map-control">
+        <el-form-item label="" class="select-geounit">
+          <el-select size="small" v-model="geounit" @change="onControlUpdate">
+            <el-option v-for="item in geounits"
+              :title="item.desc" :key="item.name" :label="item.label" :value="item.name">
+              {{ item.label }}
             </el-option>
-          </el-option-group>
-        </el-select>
-      </el-form-item>
-    </m2m-control>
+          </el-select>
+        </el-form-item>
+      </m2m-control>
+      <m2m-control>
+        <el-form-item>
+          <el-select class="select-variable" v-model="variable" filterable size="small"
+            @change="onControlUpdate" placeholder="Type to search">
+            <el-option-group v-for="group in variables"
+              :key="group.label" :label="group.label">
+              <el-option v-for="item in group.options" :key="item.name"
+                :label="item.label" :value="item.name">
+              </el-option>
+            </el-option-group>
+          </el-select>
+        </el-form-item>
+      </m2m-control>
+    </div>
     <!-- Sync move -->
-    <div class="map-control-wrap map-control--right map-control--row2">
-      <m2m-control v-if="totalMaps > 1">
+    <div class="map-control-wrap map-control--right">
+      <m2m-control class="map-control-padded" v-if="settings && totalMaps > 1">
           <el-form-item class="el-form-item--hover-label" label="Sync">
-            <el-switch on-text="ON" off-text="OFF" v-model="syncMove"></el-switch>
+            <el-switch on-text="" off-text="" v-model="settings.syncMove"></el-switch>
           </el-form-item>
       </m2m-control>
       <m2m-control class="map-number-control">
@@ -41,6 +43,7 @@
     <v-map ref="map" v-loading="loading" :options="mapOptions">
       <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
       <v-geojson-layer ref="geojson" :geojson="geojson" :options="geojsonOptions"></v-geojson-layer>
+      <!--
       <div class="map-info-wrap">
         <div class="map-info" v-if="infoItem">
           <strong class="item-name">
@@ -51,18 +54,26 @@
           <span class="item-units" v-html="meta.units"></span>
         </div>
       </div>
-      <div class="map-legend" v-if="!loading">
-        <h5>{{ meta.legend || meta.label }}</h5>
-        <table v-if="legendColors">
-          <tr v-for="(item, index) in legendColors" :key="index">
-            <td class="color">
-              <i :style="'background-color: ' + item.color"></i>
-            </td>
-            <td class="label" v-html="item.label">
-            </td>
-          </tr>
-        </table>
-        <p class="note" v-if="meta.desc" v-html="meta.desc"></p>
+      -->
+      <div class="map-control map-legend" v-if="!loading">
+        <div class="m2m-zoom-toggler" @click="settings.showLegend = !settings.showLegend">
+         <i class="el-icon-arrow-up"></i>
+        </div>
+        <el-collapse-transition>
+        <div class="m2m-zoom-elem" v-show="settings.showLegend">
+          <h5>{{ meta.legend || meta.label }}</h5>
+          <table v-if="legendColors">
+            <tr v-for="(item, index) in legendColors" :key="index">
+              <td class="color">
+                <i class="legend-box" :style="'background-color: ' + item.color"></i>
+              </td>
+              <td class="label" v-html="item.label">
+              </td>
+            </tr>
+          </table>
+          <p class="note" v-if="meta.desc" v-html="meta.desc"></p>
+        </div>
+        </el-collapse-transition>
       </div>
     </v-map>
   </div>
@@ -71,7 +82,8 @@
 <script>
 import {
   geounits, getVariables,
-  getGeoData, findVariable, getFormat
+  getGeoData, findVariable, getFormat,
+  settings
 } from '@/components/api'
 import MapControl from "./control"
 import VMap from "./map"
@@ -90,8 +102,12 @@ export default {
     return {
       // must be an empty array, otherwise leaflet will complain
       geojson: [],
-      loading: true,
+      geojsonLoading: true,
       geounits: geounits,
+
+      // persistent settings
+      // (stored locally instead on in url)
+      settings: null,
 
       tile: getTileProvider(),
 
@@ -103,9 +119,6 @@ export default {
       // that the tooltip should be expanded
       // mode
       bigMode: this.config.zoom > this.ZOOM_BIG,
-
-      // whether to sync moves between different maps
-      syncMove: true,
 
       mapOptions: {
         center: this.config.center,
@@ -197,7 +210,7 @@ export default {
      * The meta data of current variable
      */
     meta () {
-      return findVariable(this.config.variable)
+      return findVariable(this.variable)
     },
     /**
      * get all possible values
@@ -258,7 +271,11 @@ export default {
 
     mapObject () {
       return this.$refs.map.mapObject
-    }
+    },
+
+    loading () {
+      return this.geojsonLoading || this.settings == null
+    },
   },
   watch: {
     ['config.geounit'] () {
@@ -267,6 +284,7 @@ export default {
     ['config.variable'] () {
       this.checkVariableValidity()
       this.resetStyle()
+      this.updateTooltip(true)
     },
     ['config.center'] (to) {
       this.updateView()
@@ -274,15 +292,34 @@ export default {
     ['config.zoom'] (to) {
       this.updateView()
     },
+    settings: {
+      handler: function (val) {
+        settings.dump(this)
+      },
+      deep: true,
+    },
   },
   methods: {
 
+    loadSettings () {
+      settings.load(this).then(vals => {
+        this.settings = {
+          // whether to sync moves between different maps
+          syncMove: true,
+          // whether to show legend
+          showLegend: true,
+          // stored settings
+          ...vals
+        }
+      })
+    },
+
     loadPolygons () {
-      this.loading = true
+      this.geojsonLoading = true
       getGeoData(this.geounit)
         .then(data => {
           this.geojson = data
-          this.loading = false
+          this.geojsonLoading = false
           this.checkVariableValidity()
         })
     },
@@ -325,14 +362,24 @@ export default {
       }
     },
     simpleTooltip (item) {
-      return item.name
+      return `<strong>${item.name}</strong> <br>
+        ${this.formatted(item)}
+        ${this.meta.units}
+      `
+    },
+    formatted (item) {
+      return this.format(item[this.variable])
     },
     fullTooltip (item) {
       const format = (name) => {
         return getFormat(name)(item[name])
       }
       return `<div class="item-detail">
-            <h4>${item.name}</h4>
+            <h4>
+              <strong>${item.name}</strong>:
+              ${this.formatted(item)}
+              ${this.meta.units}
+            </h4>
             <table class="item-props">
               <tr>
                 <th>Population</th>
@@ -353,8 +400,7 @@ export default {
             </table>
         </div>`
     },
-    updateTooltip: _.debounce(function () {
-      let update = false
+    updateTooltip: _.debounce(function (update = false) {
       // only update when zoom level
       // switched between big and small
       if (this.getZoom() > this.ZOOM_BIG) {
@@ -459,7 +505,7 @@ export default {
     },
 
     onMove (e) {
-      if (this.syncMove) {
+      if (this.settings.syncMove) {
         this.$emit('syncMove', e, this)
       }
     },
@@ -504,15 +550,20 @@ export default {
     }
 
   },
+
+  created () {
+    this.loadSettings()
+  },
+
   mounted () {
     let map = this.mapObject
 
     // add zoom controls
     L.control.zoom({ position: 'bottomright' }).addTo(map)
 
+    map.on('drag', (e) => this.onMove(e))
     map.on('dragend', (e) => this.onMapUpdate(e))
     map.on('zoomend', (e) => this.onZoomChange(e))
-    map.on('mosuemove', (e) => this.onMove(e))
 
     this.loadPolygons()
   }

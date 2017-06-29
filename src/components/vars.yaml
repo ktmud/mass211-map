@@ -37,17 +37,11 @@ variables:
     options:
       - name: fertility
         label: Fertility rate
-        format: ',.0f'
-        desc: "Births per 1,000 women ages 15 to 44 in the year of 2010"
-        units: per 1,000 women
       - name: fertility_black
-        format: ',.0f'
         label: Fertility among black women
       - name: fertility_white
-        format: ',.0f'
         label: Fertility among white women
       - name: infantmortality
-        format: ',.0f'
         label: Infant Mortality
       - name: moms_no_care
         label: Lack prenatal care

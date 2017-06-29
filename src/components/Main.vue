@@ -45,7 +45,7 @@ export default {
     updateURL (to, from, ctx) {
       let configs = [...this.configs]
 
-      if (ctx.syncMove) {
+      if (ctx.settings.syncMove) {
         configs = configs.map(item => {
           return {
             ...item,
@@ -79,9 +79,9 @@ export default {
     syncMove (e, ctx) {
       // don't do real time sync
       // if there are too many children
-      if (this.configs.length > 2) {
-        return;
-      }
+      // if (this.configs.length > 2) {
+      //   return;
+      // }
       let id = ctx.config.id
       let center = e.target.getCenter()
       let zoom = e.target.getZoom()
