@@ -55,7 +55,7 @@ function parseLocations (value, defaultValue) {
  */
 function encodeLocation (center, zoom) {
   if ('lat' in center) {
-    center = [center.lat.toFixed(10), center.lng.toFixed(10)]
+    center = [center.lat.toFixed(8), center.lng.toFixed(8)]
   }
   return `@${center.join(',')},${zoom}z`
 }

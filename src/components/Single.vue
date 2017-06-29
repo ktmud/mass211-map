@@ -117,8 +117,8 @@ export default {
         zoomDelta: 0.5,
         zoomAnimationThreshold: 6,
         maxBounds: L.latLngBounds(
-          L.latLng(45, -67),
-          L.latLng(40, -76),
+          L.latLng(43.2612, -69.4006),
+          L.latLng(40.8221, -74.2236),
         )
       },
       geojsonOptions: {
@@ -389,7 +389,7 @@ export default {
       }
     },
     setBounds (bounds) {
-      this.setBounds(bounds)
+      this.mapObject.fitBounds(bounds)
     },
     getBounds () {
       return this.mapObject.getBounds()
