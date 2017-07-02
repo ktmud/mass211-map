@@ -35,7 +35,13 @@
       <m2m-control class="map-number-control">
         <el-button v-if="totalMaps > 1" title="Remove current pane" @click="removeSelf" size="small">
           <i class="el-icon-close"></i>
-        </el-button><el-button v-if="totalMaps < 4" title="Add a map pane" @click="addSibling" size="small">
+        </el-button>
+        <el-tooltip v-if="totalMaps == 1" content="Add a new map pane">
+          <el-button title="Add a map pane" @click="addSibling" size="small">
+            <i class="el-icon-plus"></i>
+          </el-button>
+        </el-tooltip>
+        <el-button v-if="totalMaps > 1 && totalMaps < 4" title="Add a map pane" @click="addSibling" size="small">
           <i class="el-icon-plus"></i>
         </el-button>
       </m2m-control>
