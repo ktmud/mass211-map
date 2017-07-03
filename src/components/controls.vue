@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { geounits, getVariables } from '@/components/api'
+import { geounits, getVariables } from '@/api/data'
 import router from '@/router'
 
 export default {

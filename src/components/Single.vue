@@ -61,7 +61,7 @@
         </div>
       </div>
       -->
-      <div class="map-control map-legend" v-if="!loading">
+      <div class="map-control map-legend" v-if="!loading" :class="settings.showLegend ? 'active' : ''">
         <div class="m2m-zoom-toggler" @click="settings.showLegend = !settings.showLegend">
          <i class="el-icon-arrow-up"></i>
         </div>
@@ -90,11 +90,11 @@ import {
   geounits, getVariables,
   getGeoData, findVariable, getFormat,
   settings, DEFAULT_VAR
-} from '@/components/api'
+} from '@/api/data'
 import MapControl from "./control"
 import VMap from "./map"
 import { color as d3color } from 'd3-color'
-import { colorize, getTileProvider } from '@/components/utils'
+import { colorize, getTileProvider } from '@/api/utils'
 import router from '@/router'
 import _ from 'lodash'
 
@@ -584,6 +584,10 @@ export default {
 
     removeSelf (to, from) {
       this.$emit('removeSelf', this)
+    },
+
+    adjustLegend (e) {
+      console.log(e)
     }
 
   },

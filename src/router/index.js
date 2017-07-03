@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import ga from 'vue-ga'
 
 
-import { DEFAULT_VAR, DEFAULT_UNIT } from '@/components/api'
+import { DEFAULT_VAR, DEFAULT_UNIT } from '@/api/data'
 import Home from '@/components/Home'
 import Main from '@/components/Main'
 import PageNotFound from '@/components/404'

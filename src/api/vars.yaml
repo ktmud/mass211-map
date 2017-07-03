@@ -11,7 +11,7 @@ variables:
     options:
       - name: p_call
         label: 'Total calls per 1,000 people'
-        desc: 'Number of 211 calls per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
+        desc: 'Total number of 211 calls per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
       - name: p_call_childcare
         label: 'for Child Care'
         desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
@@ -56,8 +56,8 @@ variables:
         label: Median house income
         format: '$,.2s'
       - name: BelowPoverty
-        label: Below poverty
-        desc: Percentage of people earning below poverty line
+        label: In poverty
+        desc: Percentage of people with an earning below poverty line
       - name: AtLeastBachelor
         label: Higher education rate
         desc: Percentage of people with at least a Bachelor degree

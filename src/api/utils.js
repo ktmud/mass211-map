@@ -8,7 +8,6 @@
  * Distributed under terms of the MIT license.
  */
 import { tileProviders } from './vars.yaml'
-import api from './api'
 
 const DEFAULT_TILE = 'carto-light'
 export const getTileProvider = (name = DEFAULT_TILE) => {

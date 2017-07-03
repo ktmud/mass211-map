@@ -238,9 +238,13 @@ h4, h5
   text-align: center;
   cursor: pointer;
   padding: 2px;
-  border-bottom: 1px solid #eee;
+  transition: all 0.3s ease;
+  transform: scaleY(1);
   .el-icon-arrow-up
     transform: scaleX(1.6);
+.active .m2m-zoom-toggler
+  transform: scaleY(-1);
+
 .m2m-zoom-elem
   overflow: hidden;
 .m2m-zoom-enter-active, .m2m-zoom-leave-active

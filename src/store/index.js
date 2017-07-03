@@ -6,8 +6,7 @@
  */
 import Vuex from 'vuex'
 
-import api from '@/components/api'
-import { getTileProvider } from '@/components/utils'
+import { getTileProvider } from '@/api/utils'
 
 /**
  * Default configs for a map store
