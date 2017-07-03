@@ -113,10 +113,7 @@ export const getFormat = (variable, vals) => {
 }
 
 export const findVariable = (name) => {
-  if (name in variable_finder) {
-    return variable_finder[name]
-  }
-  throw new Error(`Can't find variable "${name}"`)
+  return variable_finder[name]
 }
 
 /**

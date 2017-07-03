@@ -89,7 +89,7 @@
 import {
   geounits, getVariables,
   getGeoData, findVariable, getFormat,
-  settings
+  settings, DEFAULT_VAR
 } from '@/components/api'
 import MapControl from "./control"
 import VMap from "./map"
@@ -254,7 +254,7 @@ export default {
       if (!this.variableAvail) {
         return (item) => '#eee'
       }
-      var variable = this.config.variable
+      var variable = this.variable
       var color = colorize(this.logvals)
       var ret = (item) => {
         if (item.properties) {
@@ -291,6 +291,11 @@ export default {
     },
   },
   watch: {
+    ['meta'] (to, from) {
+      if (!from) {
+        this.loadPolygons();
+      }
+    },
     ['config.geounit'] () {
       this.loadPolygons()
     },
@@ -338,17 +343,26 @@ export default {
           this.geojsonLoading = false
           this.checkVariableValidity()
         }, err => {
-          this.$message('Invalid URL provided');
-          setTimeout(() => {
-            router.replace('/')
-          }, 300)
+          this.fail('Invalid URL provided');
         })
+    },
+
+    fail (msg) {
+      this.$message.error(msg, { duration: 1500 });
+      setTimeout(() => {
+        this.updateURL({
+          ...this.config,
+          variable: DEFAULT_VAR,
+          center: this.getCenter(),
+          zoom: this.getZoom()
+        })
+      }, 2000)
     },
 
     checkVariableValidity () {
       if (!this.variableAvail) {
         this.$message({
-          message: 'Variable not supported at this level.',
+          message: `Variable "${this.variable}" not supported at this level.`,
           showClose: true,
           duration: 2000,
           type: 'error'
@@ -465,7 +479,9 @@ export default {
       this.mapObject.setZoom(zoom)
     },
     getZoom () {
-      return this.mapObject.getZoom()
+      // take care of javascript float precision bug which produces
+      // numbers like .0000000001
+      return Math.round(this.mapObject.getZoom() * 10) / 10
     },
     getCenter (target=null) {
       return (target || this.mapObject).getCenter()
@@ -484,7 +500,7 @@ export default {
      * Get the values stored in geojson features
      */
     getGeoVals (variable, removeNA=true) {
-     variable = variable || this.config.variable
+     variable = variable || this.variable
       let ret = this.geojson.features.map(item => {
         return item.properties[variable]
       })
@@ -540,7 +556,7 @@ export default {
         ...from,
         center: this.getCenter(),
         // handle float precision error
-        zoom: Math.round(this.getZoom() * 10) / 10
+        zoom: this.getZoom()
       }
       this.updateURL(to, from)
     }, 400),
@@ -585,8 +601,12 @@ export default {
     map.on('drag', (e) => this.onMove(e))
     map.on('dragend', (e) => this.onMapUpdate(e))
     map.on('zoomend', (e) => this.onZoomChange(e))
-
-    this.loadPolygons()
+    if (this.meta) {
+      this.loadPolygons()
+    } else {
+      let msg = `Variable "${this.config.variable}" is not available.`
+      this.fail(msg);
+    }
   }
 }
 </script>
