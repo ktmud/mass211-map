@@ -95,6 +95,7 @@ import MapControl from "./control"
 import VMap from "./map"
 import { color as d3color } from 'd3-color'
 import { colorize, getTileProvider } from '@/components/utils'
+import router from '@/router'
 import _ from 'lodash'
 
 export default {
@@ -113,7 +114,13 @@ export default {
 
       // persistent settings
       // (stored locally instead on in url)
-      settings: null,
+      settings: {
+        // whether to sync moves between different maps
+        syncMove: true,
+        // whether to show legend
+        showLegend: this.totalMaps <= 3,
+        loading: true
+      },
 
       tile: getTileProvider(),
 
@@ -280,7 +287,7 @@ export default {
     },
 
     loading () {
-      return this.geojsonLoading || this.settings == null
+      return this.geojsonLoading || this.settings.loading;
     },
   },
   watch: {
@@ -309,14 +316,17 @@ export default {
 
     loadSettings () {
       settings.load(this).then(vals => {
-        this.settings = {
-          // whether to sync moves between different maps
-          syncMove: true,
-          // whether to show legend
-          showLegend: true,
-          // stored settings
-          ...vals
+        if (vals) {
+          if (vals.showLegend !== this.settings.showLegend) {
+            this.settings.showLegend = vals.showLegend;
+          }
+          if (vals.syncMove !== this.settings.syncMove) {
+            this.settings.syncMove = vals.syncMove;
+          }
         }
+        this.settings.loading = false;
+      }, err => {
+        this.settings.loading = false;
       })
     },
 
@@ -327,6 +337,11 @@ export default {
           this.geojson = data
           this.geojsonLoading = false
           this.checkVariableValidity()
+        }, err => {
+          this.$message('Invalid URL provided');
+          setTimeout(() => {
+            router.replace('/')
+          }, 300)
         })
     },
 
