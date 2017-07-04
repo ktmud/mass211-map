@@ -13,10 +13,13 @@ import './theme/index.sass'
 import '../theme/index.css'
 
 Vue.config.productionTip = false
-Vue.component('v-map', Vue2Leaflet.Map);
+
 Vue.component('v-tilelayer', Vue2Leaflet.TileLayer);
 Vue.component('v-geojson-layer', Vue2Leaflet.GeoJSON);
 Vue.component('v-marker', Vue2Leaflet.Marker);
+
+import MapControl from "@/components/map/Control"
+Vue.component('map-control', MapControl);
 
 Vue.use(ElementUI)
 // Vue.use(Vuex)

@@ -3,8 +3,7 @@ import Router from 'vue-router'
 import ga from 'vue-ga'
 
 
-import { DEFAULT_VAR, DEFAULT_UNIT } from '@/api/data'
-import Home from '@/components/Home'
+import { DEFAULT_VAR, DEFAULT_UNIT, DEFAULT_BOUNDS } from '@/api/data'
 import Main from '@/components/Main'
 import PageNotFound from '@/components/404'
 
@@ -39,13 +38,18 @@ function splitPlus (value, defaultValue) {
  * format: "@42.1299658,-71.7159472,9z"
  */
 const re_loc = /\@([-\d\.]+),([-\d\.]+),([\d\.]+)z/ig
-function parseLocations (value, defaultValue) {
+function parseLocations (value) {
   var m, ret = []
-  value = value || defaultValue
+  value = value || ''
   while (m = re_loc.exec(value)) {
     ret.push({
       center: [parseFloat(m[1], 10), parseFloat(m[2], 10)],
       zoom: parseFloat(m[3], 10)
+    })
+  }
+  if (!ret.length) {
+    ret.push({
+      bounds: DEFAULT_BOUNDS
     })
   }
   return ret
@@ -54,6 +58,9 @@ function parseLocations (value, defaultValue) {
  * Encode location object to string
  */
 function encodeLocation (center, zoom) {
+  if (!center || !zoom) {
+    return 'auto';
+  }
   if ('lat' in center) {
     center = [center.lat.toFixed(8), center.lng.toFixed(8)]
   }
@@ -86,8 +93,7 @@ export const parseParams = (route) => {
   let geounits = splitPlus(params.geounit, DEFAULT_UNIT)
   let variables = splitPlus(params.variable, DEFAULT_VAR)
   let n = Math.max(geounits.length, variables.length) // number of maps
-  let zoom = (9.5 - 0.8 * n).toFixed(1)
-  let locations = parseLocations(params.location, `@${DEFAULT_CENTER},${zoom}z`)
+  let locations = parseLocations(params.location)
   let maxlen = reptail(geounits, variables, locations)
   let ret = []
   for (let i = 0, l = maxlen; i < l; i++) {

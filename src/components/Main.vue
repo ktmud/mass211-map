@@ -2,25 +2,26 @@
   <div class="map-container" :class="extraClass">
     <m2m-map v-for="config in configs"
       :class="'map-' + config.id"
-      :config="config" :key="config.id"
+      :config="config"
+      :key="config.id"
       :total-maps="configs.length"
       @syncMove="syncMove"
       @updateURL="updateURL"
-      @addSibling="addItem"
-      @removeSelf="removeItem"
+      @addItem="addItem"
+      @removeItem="removeItem"
       ></m2m-map>
   </div>
 </template>
 
 <script>
-import Single from '@/components/Single'
+import MapFull from '@/components/map/Full'
 import bus from '@/components/bus'
 import router, { parseParams, encodeConfigs } from '@/router'
 
 export default {
   name: 'm2m-main',
   components: {
-    'm2m-map': Single
+    'm2m-map': MapFull
   },
   computed: {
     extraClass () {
@@ -37,11 +38,9 @@ export default {
     readParams (route) {
       this.configs = this.parseParams(route)
     },
-
     parseParams (route) {
       return parseParams(route || this.$route)
     },
-
     updateURL (to, from, ctx) {
       let configs = [...this.configs]
 
@@ -61,10 +60,8 @@ export default {
       // will need this to update current pane's
       // variable name
       configs[to.id] = { ...from, ...to }
-
       this.updateRoute(configs)
     },
-
     /**
      * Update current URL.
      * url should be the only source of truth.
@@ -75,7 +72,6 @@ export default {
       }
       router[method](route)
     },
-
     syncMove (e, ctx) {
       // don't do real time sync
       // if there are too many children
@@ -90,23 +86,18 @@ export default {
         item.setView(center, zoom, { animate: false })
       })
     },
-
-    addItem (ctx) {
-      let config = ctx.config
+    addItem (config) {
       // clone a new configs list
       let configs = [...this.configs]
       // clone current configs
-      configs.splice(ctx.config.id, 0, ctx.config)
+      configs.splice(config.id, 0, config)
       this.updateRoute(configs)
     },
-
-    removeItem (ctx) {
-      let configs = this.configs.filter(item => {
-        return item.id != ctx.config.id
-      })
+    removeItem (config) {
+      let configs = [...this.configs]
+      configs.splice(config.id, 1)
       this.updateRoute(configs)
     }
-
   },
 
   created () {

@@ -25,6 +25,12 @@ export const geounits = levels.map(item => {
 
 export const DEFAULT_UNIT = 'town'
 export const DEFAULT_VAR = 'p_call'
+export const DEFAULT_BOUNDS = L.latLngBounds(
+  // northeast
+  L.latLng(43.252669, -69.247081),
+  // southwest
+  L.latLng(40.787407, -74.295072)
+)
 
 // process variables
 for (var group in variables) {

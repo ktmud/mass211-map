@@ -207,48 +207,4 @@ h4, h5
   .map-0, .map-3
     border-right: 1px solid #ccc;
 
-
-.map-legend
-  color: #666;
-  text-align: left;
-  left: 12px;
-  bottom: 12px;
-  top: auto;
-  width: 170px;
-  padding: 0;
-  .m2m-zoom-elem
-    padding: 6px 10px 10px;
-  p
-    margin: 10px 0 0;
-    line-height: 1.4;
-    font-size: 12px;
-  td
-    line-height: 0;
-    padding: 0;
-    text-align: right;
-  i.legend-box
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-  .note
-    color: #999;
-
-.m2m-zoom-toggler
-  text-align: center;
-  cursor: pointer;
-  padding: 2px;
-  transition: all 0.3s ease;
-  transform: scaleY(1);
-  .el-icon-arrow-up
-    transform: scaleX(1.6);
-.active .m2m-zoom-toggler
-  transform: scaleY(-1);
-
-.m2m-zoom-elem
-  overflow: hidden;
-.m2m-zoom-enter-active, .m2m-zoom-leave-active
-  transition: all .5s ease;
-.m2m-zoom-leave-active
-  max-height: 0;
-
+@import "./legend.sass";
