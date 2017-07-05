@@ -7,15 +7,6 @@
  *
  * Distributed under terms of the MIT license.
  */
-import { tileProviders } from './vars.yaml'
-
-const DEFAULT_TILE = 'carto-light'
-export const getTileProvider = (name = DEFAULT_TILE) => {
-  // fallback to carto-light
-  return tileProviders[name] || tileProdivers[DEFAULT_TILE]
-}
-
-
 import {
   interpolateViridis,
   scaleSequential,

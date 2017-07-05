@@ -92,12 +92,19 @@ export default {
       // clone current configs
       configs.splice(config.id, 0, config)
       this.updateRoute(configs)
+      // this.updateView(config)
     },
     removeItem (config) {
       let configs = [...this.configs]
       configs.splice(config.id, 1)
       this.updateRoute(configs)
-    }
+      // this.updateView(config)
+    },
+    // updateView (config) {
+    //   this.$children.forEach(item => {
+    //     item.quietSetBounds(item.config.bounds)
+    //   })
+    // }
   },
 
   created () {

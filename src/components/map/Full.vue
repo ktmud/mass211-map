@@ -20,8 +20,8 @@
 
 <script>
 import {
-  getGeoData, findVariable, getFormat,
-  settings, DEFAULT_VAR
+  getGeoData, findVariable, getFormat, getTileProvider,
+  settings, DEFAULT_VAR, MAX_BOUNDS, MAX_ZOOM
 } from '@/api/data'
 
 import ControlVariable from './ControlVariable'
@@ -31,13 +31,16 @@ import MapLegend from "./Legend"
 import VMap from "./Map"
 
 import { color as d3color } from 'd3-color'
-import { colorize, getTileProvider } from '@/api/utils'
+import { scaleLinear } from 'd3-scale'
+import { colorize } from '@/api/utils'
 import _ from 'lodash'
 
-const MAX_BOUNDS = L.latLngBounds(
-  L.latLng(43.7314, -67.5437),
-  L.latLng(40.4887, -76.1245),
-)
+// change the opacity based on zoom levels
+// and use d3-scale to limit the range of it
+var opacityScale = scaleLinear()
+  .domain([8, 12])
+  .range([1, 0.4])
+  .clamp(true)
 
 export default {
   props: ['config', 'total-maps'],
@@ -85,29 +88,13 @@ export default {
         zoomControl: false,
         zoomSnap: 0.1,
         zoomDelta: 0.5,
+        maxZoom: MAX_ZOOM,
         zoomAnimationThreshold: 6,
         maxBounds: MAX_BOUNDS,
       },
       geojsonOptions: {
-        style: (item) => {
-          return {
-            weight: 1,
-            color: this.strokeColor(item),
-            opacity: 1,
-            fillColor: this.fillColor(item),
-            fillOpacity: 1
-          }
-        },
-        onEachFeature: (feature, layer) => {
-           if (feature.properties) {
-             layer.bindTooltip(this.tooltip(feature))
-             layer.on({
-               mouseover: this.onHoverFeature,
-               mouseout: this.onLeaveFeature,
-               click: this.zoomToFeature
-             });
-           }
-        }
+        style: this.polygonStyle,
+        onEachFeature: this.onEachFeature,
       },
     }
   },
@@ -124,17 +111,31 @@ export default {
     meta () {
       return findVariable(this.variable)
     },
+    /**
+     * How big is considered big zoom level
+     */
     ZOOM_BIG () {
       if (this.geounit == 'county') return 9.5
       return 10
     },
+    /**
+     * Current zoom level (as seen in the config object)
+     * only updates after the URL is updated
+     */
+    zoom () {
+      return this.config.zoom
+    },
+    isZoomedIn () {
+      return this.zoom > this.ZOOM_BIG
+    },
+    fillOpacity () {
+      return opacityScale(this.zoom)
+    },
+    strokeOpacity () {
+      return opacityScale(this.zoom + 2)
+    },
     variableAvail () {
       return !this.meta.requires|| (this.geounit in this.meta.requires)
-    },
-    strokeColor () {
-      return (item) => {
-        return d3color(this.fillColor(item)).darker(1)
-      }
     },
     /**
      * get all possible values
@@ -146,20 +147,10 @@ export default {
       // remove zeros and add logs
       return this.vals.filter(x => x > 0).map(Math.log)
     },
+
+    // cache form and fillcolor functions
     format () {
-      var format = getFormat(this.variable)
-      return (val) => {
-        return format(val)
-      }
-    },
-    infoItem () {
-      let item = this.lastHoverTarget
-      if (!this.variableAvail || !item || !item.feature.properties) return null
-      let ret = item.feature.properties
-      let prefix = this.geounit == 'zip' ? 'MA' : ''
-      let suffix = this.geounit == 'county' ? 'County' : ''
-      ret.fullname = `${prefix} ${ret.name} ${suffix}`
-      return ret
+      return getFormat(this.variable)
     },
     fillColor () {
       if (!this.variableAvail) {
@@ -191,6 +182,16 @@ export default {
         }
       })
       return colors
+    },
+
+    infoItem () {
+      let item = this.lastHoverTarget
+      if (!this.variableAvail || !item || !item.feature.properties) return null
+      let ret = item.feature.properties
+      let prefix = this.geounit == 'zip' ? 'MA' : ''
+      let suffix = this.geounit == 'county' ? 'County' : ''
+      ret.fullname = `${prefix} ${ret.name} ${suffix}`
+      return ret
     },
     mapObject () {
       return this.$refs.map.mapObject
@@ -241,7 +242,6 @@ export default {
     },
   },
   methods: {
-
     loadSettings () {
       settings.load(this).then(vals => {
         if (vals) {
@@ -267,6 +267,29 @@ export default {
         }, err => {
           this.fail('Invalid URL provided');
         })
+    },
+    onEachFeature (feature, layer) {
+      if (feature.properties) {
+        layer.bindTooltip(this.tooltip(feature))
+        layer.on({
+          mouseover: this.onHoverFeature,
+          mouseout: this.onLeaveFeature,
+          click: this.zoomToFeature
+        });
+      }
+    },
+    polygonStyle (item) {
+      let fillColor = this.fillColor(item)
+      let color = d3color(this.fillColor(item)).darker(1)
+      let fillOpacity = this.fillOpacity
+      let opacity = this.strokeOpacity
+      return {
+        weight: 1,
+        color,
+        opacity,
+        fillColor,
+        fillOpacity
+      }
     },
     fail (msg) {
       this.$message.error(msg, { duration: 1500 });
@@ -307,7 +330,7 @@ export default {
      */
     tooltip (feature) {
       let item = feature.properties
-      if (this.getZoom() > this.ZOOM_BIG) {
+      if (this.isZoomedIn) {
         return this.fullTooltip(item)
       } else {
         return this.simpleTooltip(item)
@@ -355,7 +378,7 @@ export default {
     updateTooltip: _.debounce(function (update = false) {
       // only update when zoom level
       // switched between big and small
-      if (this.getZoom() > this.ZOOM_BIG) {
+      if (this.isZoomedIn) {
         if (!this.bigMode) {
           this.bigMode = true
           update = true
@@ -373,7 +396,7 @@ export default {
       }
     }, 600),
     zoomIn (e) {
-      if (this.getZoom() < this.ZOOM_BIG) {
+      if (!this.isZoomedIn) {
         this.lastBounds = this.getBounds()
       }
       this.setBounds(e.target.getBounds())
@@ -385,9 +408,20 @@ export default {
         this.setBounds(this.$refs.geojson.getBounds())
       }
     },
-    setBounds (...args) {
-      this.mapObject.fitBounds(...args)
+    setBounds (bounds, options) {
+      this.mapObject.fitBounds(bounds, options)
     },
+    // quietSetBounds (bounds) {
+    //   bounds = bounds || this.config.bounds;
+    //   setTimeout(() => {
+    //     this.fitting = true;
+    //     this.mapObject.fitBounds(bounds, { animate: false })
+    //     console.log(bounds)
+    //     setTimeout(() => {
+    //       this.fitting = false;
+    //     }, 400)
+    //   })
+    // },
     getBounds () {
       return this.mapObject.getBounds()
     },
@@ -410,12 +444,18 @@ export default {
     },
     redraw () {
       this.mapObject._onResize()
+      // if (this.config.bounds) {
+      //   this.quietSetBounds()
+      // }
     },
     /**
      * Get the values stored in geojson features
      */
     getGeoVals (variable, removeNA=true) {
-     variable = variable || this.variable
+      variable = variable || this.variable
+      if (!this.geojson.features) {
+        return []
+      }
       let ret = this.geojson.features.map(item => {
         return item.properties[variable]
       })
@@ -448,8 +488,8 @@ export default {
       }
     },
     onZoomChange (e) {
-      this.updateTooltip()
       this.onMapUpdate(e)
+      this.updateTooltip()
     },
     onMove (e) {
       if (this.settings.syncMove) {
@@ -460,6 +500,7 @@ export default {
      * Map updated; change location in url
      */
     onMapUpdate: _.debounce(function (e) {
+      if (this.fitting) return;
       let from = this.config
       let to = {
         ...from,
@@ -467,7 +508,10 @@ export default {
         // handle float precision error
         zoom: this.getZoom()
       }
+      this.config.zoom = to.zoom
+      this.config.center = to.center
       this.updateURL(to, from)
+      this.resetStyle()
     }, 400),
     onControlUpdate (to) {
       var from = this.config
@@ -491,6 +535,12 @@ export default {
     map.on('drag', (e) => this.onMove(e))
     map.on('dragend', (e) => this.onMapUpdate(e))
     map.on('zoomend', (e) => this.onZoomChange(e))
+    if (!this.config.zoom) {
+      map.whenReady(() => {
+        this.config.center = this.getCenter()
+        this.config.zoom = this.getZoom()
+      })
+    }
     if (this.meta) {
       this.loadPolygons()
       this.updateView()

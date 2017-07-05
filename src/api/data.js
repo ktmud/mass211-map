@@ -10,6 +10,15 @@
 import 'whatwg-fetch'  // add `window.fetch` shim
 import forage from 'localforage'
 import { levels, variables } from './vars.yaml'
+import { tileProviders } from './vars.yaml'
+
+const DEFAULT_TILE = 'carto-light'
+export const MAX_ZOOM = tileProviders[DEFAULT_TILE].maxZoom || 18
+export const getTileProvider = (name = DEFAULT_TILE) => {
+  // fallback to carto-light
+  return tileProviders[name]
+}
+
 
 const variable_finder = {}
 const cache = {}
@@ -27,9 +36,13 @@ export const DEFAULT_UNIT = 'town'
 export const DEFAULT_VAR = 'p_call'
 export const DEFAULT_BOUNDS = L.latLngBounds(
   // northeast
-  L.latLng(43.252669, -69.247081),
+  L.latLng(43, -69.2),
   // southwest
-  L.latLng(40.787407, -74.295072)
+  L.latLng(41, -74)
+)
+export const MAX_BOUNDS = L.latLngBounds(
+  L.latLng(48, -60),
+  L.latLng(35, -83)
 )
 
 // process variables
@@ -69,7 +82,7 @@ export const getGeoData = (level) => {
       // var wait = cached.features.length > 400 ? 0 : 0;
       return cache[level].then(resolve, reject)
     }
-    var file = `/static/data/${level}.geojson`
+    var file = `/data/${level}.geojson`
     fetch(file)
       .then(response => response.json())
       .then(resolve, reject)

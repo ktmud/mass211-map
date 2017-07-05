@@ -55,6 +55,7 @@ variables:
       - name: MedHouseIncome
         label: Median house income
         format: '$,.2s'
+        units: ' / year'
       - name: BelowPoverty
         label: In poverty
         desc: Percentage of people with an earning below poverty line
