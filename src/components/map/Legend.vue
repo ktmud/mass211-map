@@ -4,7 +4,7 @@
      <i class="el-icon-arrow-up"></i>
     </div>
     <el-collapse-transition>
-    <div class="m2m-zoom-elem" v-show="showLegend">
+    <div v-if="meta" class="m2m-zoom-elem" v-show="showLegend">
       <h5>{{ meta.legend || meta.label }}</h5>
       <table v-if="colors">
         <tr v-for="(item, index) in colors" :key="index">

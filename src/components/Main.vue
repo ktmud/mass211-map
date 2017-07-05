@@ -70,6 +70,7 @@ export default {
       let route = {
         params: encodeConfigs(configs)
       }
+      console.log(configs)
       router[method](route)
     },
     syncMove (e, ctx) {

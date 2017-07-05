@@ -21,7 +21,7 @@
 <script>
 import {
   getGeoData, findVariable, getFormat, getTileProvider,
-  settings, DEFAULT_VAR, MAX_BOUNDS, MAX_ZOOM
+  settings, DEFAULT_UNIT, DEFAULT_VAR, MAX_BOUNDS, MAX_ZOOM
 } from '@/api/data'
 
 import ControlVariable from './ControlVariable'
@@ -292,15 +292,16 @@ export default {
       }
     },
     fail (msg) {
-      this.$message.error(msg, { duration: 1500 });
+      this.$message.error(msg, { duration: 1200 });
       setTimeout(() => {
         this.updateURL({
           ...this.config,
+          geounit: DEFAULT_UNIT,
           variable: DEFAULT_VAR,
           center: this.getCenter(),
           zoom: this.getZoom()
-        })
-      }, 2000)
+        }, this.config)
+      }, 2500)
     },
     checkVariableValidity () {
       if (!this.variableAvail) {
