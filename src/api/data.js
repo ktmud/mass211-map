@@ -65,9 +65,9 @@ for (var group in variables) {
       item.desc = `Births per 1,000 ${race} women ages 15 to 44 in the year of 2010`
     }
     item.format = item.format || format
+    item.unitsShort = item.unitsShort || ''
     // variable units, used for formatting
     item.units = item.units || item.unitsShort
-    item.unitsShort = item.unitsShort || ''
     variable_finder[item.name] = item
   })
 }
