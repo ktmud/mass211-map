@@ -147,7 +147,6 @@ export default {
       // remove zeros and add logs
       return this.vals.filter(x => x > 0).map(Math.log)
     },
-
     // cache form and fillcolor functions
     format () {
       return getFormat(this.variable)
@@ -183,7 +182,6 @@ export default {
       })
       return colors
     },
-
     infoItem () {
       let item = this.lastHoverTarget
       if (!this.variableAvail || !item || !item.feature.properties) return null
@@ -193,6 +191,22 @@ export default {
       ret.fullname = `${prefix} ${ret.name} ${suffix}`
       return ret
     },
+    /**
+     * Feature ID to leaflet internal id mapping
+     */
+    polygonIds () {
+      let ret = {}
+      if (!this.geojson.features) {
+        return ret
+      }
+      let geojson = this.$refs.geojson.$geoJSON
+      geojson.getLayers().forEach((layer) => {
+        ret[layer.feature.id] = geojson.getLayerId(layer)
+      })
+      return ret
+    },
+
+
     mapObject () {
       return this.$refs.map.mapObject
     },
@@ -465,19 +479,39 @@ export default {
       }
       return ret
     },
-    onHoverFeature (e) {
-      var layer = e.target;
-      layer.setStyle({
+    onHoverFeature ({ target }) {
+      this.highlightFeature(target)
+      this.$emit('hoverFeature', target, this)
+    },
+    onLeaveFeature ({ target }) {
+      this.unhighlightFeature(target)
+      this.$emit('leaveFeature', target, this)
+    },
+    highlightFeature (target, style) {
+      style = style || {
         opacity: 0.4,
         fillOpacity: 0.08,
         fillColor: '#fe9929',
-      })
+      }
+      // target is a GeoJSON layer
+      target.setStyle(style).bringToFront()
       this.hovering = true
-      this.lastHoverTarget = layer
+      this.lastHoverTarget = target
     },
-    onLeaveFeature (e) {
+    unhighlightFeature (target) {
       this.hovering = false
-      this.resetStyle(e.target)
+      this.resetStyle(target)
+      target.bringToBack()
+    },
+    /**
+     * Find the layer with the same id
+     */
+    findLayer ({ feature }) {
+      // the leaflet geojson object
+      let id = feature.id
+      let geojson = this.$refs.geojson.$geoJSON
+      let leafletId = this.polygonIds[id]
+      return geojson.getLayer(leafletId)
     },
     zoomToFeature (e) {
       if (e.target == this.lastClickTarget) {

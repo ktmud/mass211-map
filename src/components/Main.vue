@@ -9,6 +9,8 @@
       @updateURL="updateURL"
       @addItem="addItem"
       @removeItem="removeItem"
+      @hoverFeature="hoverFeature"
+      @leaveFeature="leaveFeature"
       ></m2m-map>
   </div>
 </template>
@@ -98,13 +100,28 @@ export default {
       let configs = [...this.configs]
       configs.splice(config.id, 1)
       this.updateRoute(configs)
-      // this.updateView(config)
     },
-    // updateView (config) {
-    //   this.$children.forEach(item => {
-    //     item.quietSetBounds(item.config.bounds)
-    //   })
-    // }
+    /**
+     * Sync the hovering of features
+     */
+    hoverFeature (layer, ctx, isLeave = false) {
+      this.$children.forEach(item => {
+        if (item == ctx) return
+        if (item.geounit !== ctx.geounit) return
+        let target = item.findLayer(layer)
+        if (isLeave) {
+          item.unhighlightFeature(target)
+        } else {
+          item.highlightFeature(target, {
+            color: '#f21',
+            weight: 2
+          })
+        }
+      })
+    },
+    leaveFeature (layer, ctx) {
+      this.hoverFeature(layer, ctx, true)
+    }
   },
 
   created () {
