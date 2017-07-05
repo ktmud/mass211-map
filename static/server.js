@@ -14,11 +14,11 @@ var compression = require('compression')
 
 app = express();
 
+app.use(compression())
 app.use(staticMiddleware);
 app.use(serveStatic(path.posix.join(__dirname, 'root')));
 app.use(history({ disableDotRule: true }));
 app.use(staticMiddleware);
-app.use(compression())
 
 var port = process.env.PORT || 5000;
 
