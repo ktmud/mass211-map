@@ -1,0 +1,15 @@
+{
+ "name": "m2m",
+ "version": "0.0.1",
+ "description": "Mass 211",
+ "author": "Jesse Yang",
+ "private": true,
+ "engines": {
+   "node": ">= 7.7.3",
+   "npm": ">= 5.0.4"
+ },
+ "dependencies": {
+  "connect-history-api-fallback": "^1.3.0",
+  "express": "^4.14.1"
+ }
+}
