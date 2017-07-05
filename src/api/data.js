@@ -82,7 +82,7 @@ export const getGeoData = (level) => {
       // var wait = cached.features.length > 400 ? 0 : 0;
       return cache[level].then(resolve, reject)
     }
-    var file = `/static/data/${level}.geojson`
+    var file = `/static/data/${level}.json`
     fetch(file)
       .then(response => response.json())
       .then(resolve, reject)

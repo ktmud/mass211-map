@@ -15,7 +15,7 @@ var compression = require('compression')
 app = express();
 
 app.use(staticMiddleware);
-app.use(serveStatic(path.posix.join(__dirname, 'root'));
+app.use(serveStatic(path.posix.join(__dirname, 'root')));
 app.use(history({ disableDotRule: true }));
 app.use(staticMiddleware);
 app.use(compression())
