@@ -34,6 +34,7 @@ variables:
   - label: 'Public Health'
     requires:
       town: 1
+      county: 1
     options:
       - name: fertility
         label: Fertility rate
@@ -43,6 +44,9 @@ variables:
         label: Fertility among white women
       - name: infantmortality
         label: Infant Mortality
+        format: '.0f'
+        units: deaths per 1,000 live births
+        unitsShort: per 1,000 births
       - name: moms_no_care
         label: Lack prenatal care
         desc: Mothers not receiving prenatal care in first trimester
