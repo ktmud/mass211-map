@@ -20,8 +20,11 @@ variables:
       - name: p_call_employment
         label: 'for Employment'
         desc: 'Help me find a job'
-      - name: p_call_shelter
+      - name: p_call_housing
         label: 'for Housing/Shelter'
+      - name: p_call_homeless
+        label: 'for Homeless People'
+        desc: 'Calls related to housing needs of homeless people or people at risk'
       - name: p_call_mental
         label: 'for Mental Health Issues'
       - name: p_call_utilities
@@ -30,6 +33,10 @@ variables:
       - name: p_call_income
         label: 'for Income Maitanence'
         desc: 'Number of 211 calls for basic income or basic needs expense assistance.'
+      - name: p_called_before
+        label: 'Repetitive Callers'
+        desc: 'Percentage of calls from people who called before. Observations with a total number of less than
+               10 calls are ignored.'
 
   - label: 'Public Health'
     requires:

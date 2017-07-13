@@ -52,8 +52,8 @@ for (var group in variables) {
     item.label = item.label || item.name
     item.group = group
     item.desc = item.desc || null
-    let format = '.2%'
-    if (item.name.indexOf('p_call') == 0) {
+    let format = '.0%'
+    if (item.name == 'p_call' || item.name.indexOf('p_call_') == 0) {
       item.format = ',.2f'
       item.units = 'calls'
     }
