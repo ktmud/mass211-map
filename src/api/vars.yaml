@@ -39,6 +39,14 @@ variables:
         label: 'Repetitive Callers'
         desc: 'Percentage of calls from people who called before. Observations with a total number of less than
                10 calls are ignored.'
+      - name: residual
+        label: 'Prediction Redisual'
+        format: '.2f'
+        transform: 'raw'
+        color: 'RdBu'
+        balanced: true
+        desc: 'The difference between predicted number of calls and the actual numbers.'
+
 
   - label: 'Public Health'
     requires:

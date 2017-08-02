@@ -12,20 +12,26 @@ import {
   scaleSequential,
   scaleOrdinal
 } from 'd3-scale'
-import {
-  interpolatePuBu, interpolateGnBu,
-  interpolateGreens, interpolateOrRd,
-  interpolateBlues
-} from 'd3-scale-chromatic'
+import * as d3sc from 'd3-scale-chromatic'
 import { extent } from 'd3-array'
 
 /**
  * Create a color pallete for a set
  * of continous values
  */
-export const colorize = (values) => {
-  let domain = extent(values)
-  let inter = interpolateBlues
+export const colorize = (values, color, balanced=false) => {
+  let domain
+  if (balanced) {
+    let max = Math.max(...values)
+    let min = Math.min(...values)
+    if (min < 0) {
+      max = Math.min(-min, max)
+    }
+    domain = [max, -max]
+  } else {
+    domain = extent(values)
+  }
+  let inter = d3sc['interpolate' + (color || 'Blues')]
   let ret = scaleSequential(inter)
     .domain(domain)
   return ret

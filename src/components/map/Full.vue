@@ -156,10 +156,16 @@ export default {
         return (item) => '#eee'
       }
       var variable = this.variable
-      var color = colorize(this.logvals)
+      var color = colorize(this.logvals, this.meta.color, this.meta.balanced)
       var ret = (item) => {
         if (item.properties) {
-          item = Math.log(item.properties[variable])
+          item = item.properties[variable]
+          switch (this.meta.transform) {
+            case 'raw':
+              break
+            default:
+              item = Math.log(item)
+          }
         }
         return color(item)
       }
@@ -172,8 +178,11 @@ export default {
       }
       let vals = this.fillColor.ticks(5)
       let colors = vals.map(x => {
-        // revert to original values
-        let val = Math.pow(Math.exp(1), x)
+        let val = x
+        // revert to original values for the legend
+        if (this.meta.transform != 'raw') {
+          val = Math.pow(Math.exp(1), val)
+        }
         return {
           color: this.fillColor(x),
           label: this.format(val) + ' ' + this.meta.unitsShort,
@@ -352,11 +361,23 @@ export default {
       }
     },
     simpleTooltip (item) {
-      return `<strong>${item.name}</strong> <br>
+      return `<strong>${this.itemName(item)}</strong> <br>
         ${this.formatted(item)}
         ${this.meta.units}
       `
     },
+    /**
+     * Format the name
+     */
+    itemName (item) {
+      if (this.geounit == 'zip') {
+        return item.name + ' ' + item.town
+      }
+      return item.name
+    },
+    /**
+     * Format the value
+     */
     formatted (item) {
       return this.format(item[this.variable])
     },
@@ -366,7 +387,7 @@ export default {
       }
       return `<div class="item-detail">
             <h4>
-              <strong>${item.name}</strong>:
+              <strong>${this.itemName(item)}</strong>:
               ${this.formatted(item)}
               ${this.meta.units}
             </h4>
