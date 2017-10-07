@@ -18,10 +18,12 @@
 <script>
 import MapFull from '@/components/map/Full'
 import bus from '@/components/bus'
+import * as mixins from '@/api/mixins'
 import router, { parseParams, encodeConfigs } from '@/router'
 
 export default {
   name: 'm2m-main',
+  mixins: [mixins.FullscreenMixin],
   components: {
     'm2m-map': MapFull
   },
@@ -123,7 +125,6 @@ export default {
       this.hoverFeature(layer, ctx, true)
     }
   },
-
   created () {
     this.readParams()
   },
@@ -141,8 +142,6 @@ export default {
         })
       }
     }
-  },
-  mounted () {
   },
 }
 </script>

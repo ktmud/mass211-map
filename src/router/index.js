@@ -5,6 +5,8 @@ import ga from 'vue-ga'
 
 import { DEFAULT_VAR, DEFAULT_UNIT, DEFAULT_BOUNDS } from '@/api/data'
 import Main from '@/components/Main'
+import Resources from '@/components/Resources'
+import Timeline from '@/components/Timeline'
 import PageNotFound from '@/components/404'
 
 Vue.use(Router)
@@ -12,6 +14,16 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
+    {
+      name: 'resources',
+      path: '/resources/:keyword?',
+      component: Resources,
+    },
+    {
+      name: 'timeline',
+      path: '/timeline/:daterange?',
+      component: Timeline
+    },
     {
       name: 'main',
       path: '/:geounit?/:variable?/:location?',

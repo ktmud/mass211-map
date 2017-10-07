@@ -25,7 +25,9 @@ export default {
       this.mapObject.fitBounds(options.bounds)
     }
     for (var i = 0; i < this.$children.length; i++) {
-      this.$children[i].deferredMountedTo(this.mapObject);
+      if (this.$children[i].deferredMountedTo) {
+        this.$children[i].deferredMountedTo(this.mapObject);
+      }
     }
   },
   methods: {

@@ -1,11 +1,5 @@
 /*
- * map.js
- *
- * Map source methods and consts
- *
  * Copyright (C) 2017 Jesse Yang <hello@yjc.me>
- *
- * Distributed under terms of the MIT license.
  */
 import {
   interpolateViridis,
@@ -35,4 +29,24 @@ export const colorize = (values, color, balanced=false) => {
   let ret = scaleSequential(inter)
     .domain(domain)
   return ret
+}
+
+export const removeClass = (el, className) => {
+  if (el.classList) {
+    el.classList.remove(className)
+  } else {
+    el.className = el.className.replace(
+      new RegExp('(^|\\b)' +
+        className.split(' ').join('|') +
+        '(\\b|$)', 'gi'),
+      ' '
+    );
+  }
+}
+export const addClass = (el, className) => {
+  if (el.classList) {
+    el.classList.add(className)
+  } else {
+    el.className += ' ' + className
+  }
 }

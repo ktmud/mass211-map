@@ -26,9 +26,7 @@ import {
 
 import ControlVariable from './ControlVariable'
 import ControlSync from './ControlSync'
-import MapControl from "./Control"
 import MapLegend from "./Legend"
-import VMap from "./Map"
 
 import { color as d3color } from 'd3-color'
 import { scaleLinear } from 'd3-scale'
@@ -47,12 +45,9 @@ export default {
   components: {
     ControlVariable,
     ControlSync,
-    VMap,
-    MapControl,
     MapLegend
   },
   data () {
-
     return {
       // must be an empty array, otherwise leaflet will complain
       geojson: [],
