@@ -14,9 +14,11 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import AsyncComputed from 'vue-async-computed'
 import InstantSearch from 'vue-instantsearch';
 
+import 'ionicons/dist/css/ionicons.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
-import 'ionicons/dist/css/ionicons.css'
+import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.js'
 
 Vue.config.productionTip = false
 
@@ -34,7 +36,7 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-L.Icon.Default = () => {
+L.Icon.Default = function() {
   return L.AwesomeMarkers.icon({
     icon: 'md-home',
     prefix: 'ion',
@@ -52,6 +54,9 @@ Vue.component('m2m-resource-map', ResourceMap);
 Vue.use(ElementUI)
 // Vue.use(Vuex)
 Vue.use(AsyncComputed)
+
+import VueObserveVisibility from 'vue-observe-visibility'
+Vue.use(VueObserveVisibility)
 
 // import { sync } from 'vuex-router-sync'
 // import { store } from './store'

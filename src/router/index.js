@@ -16,8 +16,27 @@ const router = new Router({
   routes: [
     {
       name: 'resources',
-      path: '/resources/:keyword?',
+      path: '/resources/:query?/:location?',
       component: Resources,
+      props (route) {
+        // map location
+        let location = parseLocations(route.params.location)[0]
+        let query = route.params.query
+        if (query == '-') {
+          query = ''
+        }
+        query = (query ||  '').replace(/\+/g, ' ')
+        return {
+          config: {
+            zoom: location.zoom,
+            center: location.center,
+            // keyword
+            query: query,
+            // search paramaters
+            queryParameters: route.query
+          }
+        }
+      },
     },
     {
       name: 'timeline',
@@ -66,19 +85,6 @@ function parseLocations (value) {
   }
   return ret
 }
-/**
- * Encode location object to string
- */
-function encodeLocation (center, zoom) {
-  if (!center || !zoom) {
-    return 'auto';
-  }
-  if ('lat' in center) {
-    center = [center.lat.toFixed(8), center.lng.toFixed(8)]
-  }
-  return `@${center.join(',')},${zoom}z`
-}
-
 
 /**
  * Let a list of arrays have the same length
@@ -120,6 +126,20 @@ export const parseParams = (route) => {
   }
   return ret
 }
+
+/**
+ * Encode location object to string
+ */
+export const encodeLocation = (center, zoom) => {
+  if (!center || !zoom) {
+    return 'auto';
+  }
+  if ('lat' in center) {
+    center = [center.lat.toFixed(8), center.lng.toFixed(8)]
+  }
+  return `@${center.join(',')},${zoom}z`
+}
+
 /**
  * Encode a list of configs into params object
  */

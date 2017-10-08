@@ -3,7 +3,7 @@
     <el-menu theme="dark" :default-active="page" class="main-menu" mode="horizontal" @select="handleSelect">
       <el-menu-item index="main">Demands</el-menu-item>
       <el-menu-item index="resources">Resources</el-menu-item>
-      <el-menu-item index="timeline">Timeline</el-menu-item>
+      <!-- <el-menu-item index="timeline">Timeline</el-menu-item> -->
     </el-menu>
     <router-view></router-view>
   </div>

@@ -1,7 +1,11 @@
+$search-header-color: #78a8d8;
+$text-color: #8492A6;
+
 .leaflet-popup-content-wrapper
   border-radius: 6px;
 
-.marker-tooltip
+.resource-info
+  font-size: 13px;
   h3
     margin: 6px 0;
   .alt-name
@@ -15,16 +19,122 @@
   ul
     margin: 0;
     padding: 0;
-    border-top: 1px solid #ccc;
+    border-top: 1px dashed #ccc;
     margin-top: 5px;
     padding-top: 5px;
     list-style: none;
     max-height: 14em;
     overflow: auto;
+  .tags
+    margin-top: 4px;
   .tag
     display: inline-block;
-    // background: #f3f3f3;
-    // margin: 2px;
-    // padding: 0 3px;
-    // border-radius: 1px;
-    // text-shadow: #fff 0 1px 0;
+    background: #f0f0f0;
+    margin: 3px 5px 0 -3px;
+    padding: 1px 3px;
+    border-radius: 2px;
+    text-shadow: #fff 0 1px 0;
+
+.ais-panel
+  background: #fff;
+  width: 400px;
+  bottom: 0;
+  border-radius: 0 2px 0 0;
+  left: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: left 0.5s ease-in-out;
+  &.folded
+    left: -400px;
+  form
+    border-radius: 0 2px 0 0;
+    background: $search-header-color;
+    padding: 10px;
+  .el-input__inner
+    border-width: 0;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    &:focus
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+
+.ais-panel-toggler
+  background: #fff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 0 2px 2px 0;
+  color: $text-color;
+  cursor: pointer;
+  font-size: 9px;
+  left: 100%;
+  padding: 19px 7px;
+  position: absolute;
+  top: 3px;
+  text-align: center;
+  transform: scaleY(1);
+  .el-icon-caret-left, .el-icon-caret-right
+    transform: scaleY(1.6);
+  .el-icon-caret-right
+    display: none;
+.folded .ais-panel-toggler
+  .el-icon-caret-right
+    display: inline-block;
+  .el-icon-caret-left
+    display: none;
+
+
+.resource-list
+  color: $text-color;
+  font-size: 13px;
+  font-weight: 300;
+  // highlight
+  em 
+    color: #ef2500;
+    font-style: normal;
+  h3
+    color: #000;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 0;
+  .resource-info
+    border-bottom: 1px solid #e6e6e6;
+    padding: 1em 1em 1em 1.2em;
+    position: relative;
+    &:hover
+      background: #f9f9f9;
+    .indexer
+      color: #889;
+      display: inline-block;
+      font-style: normal;
+      left: 0.5em;
+      position: absolute;
+      text-align: right;
+      top: 2px;
+      width: 1.5em;
+    &:last-child
+      border-bottom: 0;
+
+.ais-panel-body
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 58px;
+  bottom: 60px;
+  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: 14px;
+  .no-result
+    display: none;
+  .load-more
+    margin: 4px;
+    text-align: center;
+
+.ais-panel-footer
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20px 1em 10px;
+  position: absolute;
+  border: 1px solid #eee;
+
+.ais-powered-by
+  text-align: right;

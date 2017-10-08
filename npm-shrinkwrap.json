@@ -2417,6 +2417,11 @@
       "resolved": "https://registry.npmjs.org/decamelize/-/decamelize-1.2.0.tgz",
       "integrity": "sha1-9lNNFRSCabIDUue+4m9QH5oZEpA="
     },
+    "deep-equal": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/deep-equal/-/deep-equal-1.0.1.tgz",
+      "integrity": "sha1-9dJgKStmDghO/0zbyfCK0yR0SLU="
+    },
     "deepmerge": {
       "version": "1.4.4",
       "resolved": "https://registry.npmjs.org/deepmerge/-/deepmerge-1.4.4.tgz",
@@ -6059,6 +6064,11 @@
       "version": "2.0.4",
       "resolved": "https://registry.npmjs.org/leaflet.awesome-markers/-/leaflet.awesome-markers-2.0.4.tgz",
       "integrity": "sha1-Zv6iCQycigq20fO2vdAvs3z0uho="
+    },
+    "leaflet.locatecontrol": {
+      "version": "0.62.0",
+      "resolved": "https://registry.npmjs.org/leaflet.locatecontrol/-/leaflet.locatecontrol-0.62.0.tgz",
+      "integrity": "sha512-coatKzdlrWAnlrOyy+38K9VhcSs/r/UDH32Q+mD07wvNAzrfBiaVYJhtHfqUWsVU8xKRuza/1nMbWWH54Ey6Sw=="
     },
     "leaflet.markercluster": {
       "version": "1.1.0",
@@ -10274,6 +10284,11 @@
         }
       }
     },
+    "vue-observe-visibility": {
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-0.3.1.tgz",
+      "integrity": "sha512-hrTdlkTiPmjjH+00dIiCsr/bBPNjUljNc9rboeLXMnXUqeom8LKa4l3iLwb3exa9PUUhtp4RrOtsa2eH0NimsQ=="
+    },
     "vue-router": {
       "version": "2.6.0",
       "resolved": "https://registry.npmjs.org/vue-router/-/vue-router-2.6.0.tgz",
@@ -10328,9 +10343,7 @@
       }
     },
     "vue2-leaflet-markercluster": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/vue2-leaflet-markercluster/-/vue2-leaflet-markercluster-1.1.0.tgz",
-      "integrity": "sha1-JzXWj8is/0E1dM1YVsgJPYreFmU=",
+      "version": "github:ktmud/vue2-leaflet-markercluster#ace1180f97fec11b736039874ab6eb043dd6c5a6",
       "requires": {
         "leaflet": "1.1.0",
         "leaflet.markercluster": "1.1.0",

@@ -31,6 +31,7 @@ import MapLegend from "./Legend"
 import { color as d3color } from 'd3-color'
 import { scaleLinear } from 'd3-scale'
 import { colorize } from '@/api/utils'
+import { MapMixin } from '@/api/mixins'
 import _ from 'lodash'
 
 // change the opacity based on zoom levels
@@ -47,6 +48,7 @@ export default {
     ControlSync,
     MapLegend
   },
+  mixins: [MapMixin],
   data () {
     return {
       // must be an empty array, otherwise leaflet will complain
@@ -112,16 +114,6 @@ export default {
     ZOOM_BIG () {
       if (this.geounit == 'county') return 9.5
       return 10
-    },
-    /**
-     * Current zoom level (as seen in the config object)
-     * only updates after the URL is updated
-     */
-    zoom () {
-      return this.config.zoom
-    },
-    isZoomedIn () {
-      return this.zoom > this.ZOOM_BIG
     },
     fillOpacity () {
       return opacityScale(this.zoom)
@@ -209,26 +201,8 @@ export default {
       })
       return ret
     },
-
-
-    mapObject () {
-      return this.$refs.map.mapObject
-    },
     loading () {
       return this.geojsonLoading;
-    },
-    /**
-     * Debounced view updating based on configured viewport options
-     */
-    updateView () {
-      return _.debounce(function () {
-        if (this.config.bounds) {
-          this.setBounds(this.config.bounds)
-        }
-        if (this.config.center) {
-          this.setView(this.config.center, this.config.zoom)
-        }
-      }, 10)
     },
   },
   watch: {
@@ -245,12 +219,6 @@ export default {
       this.checkVariableValidity()
       this.resetStyle()
       this.updateTooltip(true)
-    },
-    ['config.center'] (to) {
-      this.updateView()
-    },
-    ['config.zoom'] (to) {
-      this.updateView()
     },
     settings: {
       handler: function (val) {
@@ -308,6 +276,45 @@ export default {
         fillColor,
         fillOpacity
       }
+    },
+    /**
+     * Find the layer with the same id
+     */
+    findLayer ({ feature }) {
+      // the leaflet geojson object
+      let id = feature.id
+      let geojson = this.$refs.geojson.$geoJSON
+      let leafletId = this.polygonIds[id]
+      return geojson.getLayer(leafletId)
+    },
+    onMove (e) {
+      if (this.settings.syncMove) {
+        this.$emit('syncMove', e, this)
+      }
+    },
+    onHoverFeature ({ target }) {
+      this.highlightFeature(target)
+      this.$emit('hoverFeature', target, this)
+    },
+    onLeaveFeature ({ target }) {
+      this.unhighlightFeature(target)
+      this.$emit('leaveFeature', target, this)
+    },
+    highlightFeature (target, style) {
+      style = style || {
+        opacity: 0.4,
+        fillOpacity: 0.08,
+        fillColor: '#fe9929',
+      }
+      // target is a GeoJSON layer
+      target.setStyle(style).bringToFront()
+      this.hovering = true
+      this.lastHoverTarget = target
+    },
+    unhighlightFeature (target) {
+      this.hovering = false
+      this.resetStyle(target)
+      target.bringToBack()
     },
     fail (msg) {
       this.$message.error(msg, { duration: 1200 });
@@ -426,59 +433,6 @@ export default {
         })
       }
     }, 600),
-    zoomIn (e) {
-      if (!this.isZoomedIn) {
-        this.lastBounds = this.getBounds()
-      }
-      this.setBounds(e.target.getBounds())
-    },
-    zoomOut (e) {
-      if (this.lastBounds) {
-        this.setBounds(this.lastBounds)
-      } else {
-        this.setBounds(this.$refs.geojson.getBounds())
-      }
-    },
-    setBounds (bounds, options) {
-      this.mapObject.fitBounds(bounds, options)
-    },
-    // quietSetBounds (bounds) {
-    //   bounds = bounds || this.config.bounds;
-    //   setTimeout(() => {
-    //     this.fitting = true;
-    //     this.mapObject.fitBounds(bounds, { animate: false })
-    //     console.log(bounds)
-    //     setTimeout(() => {
-    //       this.fitting = false;
-    //     }, 400)
-    //   })
-    // },
-    getBounds () {
-      return this.mapObject.getBounds()
-    },
-    setZoom (zoom) {
-      this.mapObject.setZoom(zoom)
-    },
-    getZoom () {
-      // take care of javascript float precision bug which produces
-      // numbers like .0000000001
-      return Math.round(this.mapObject.getZoom() * 10) / 10
-    },
-    getCenter (target=null) {
-      return (target || this.mapObject).getCenter()
-    },
-    panTo (...args) {
-      this.mapObject.panTo(...args)
-    },
-    setView (center, zoom, options) {
-      this.mapObject.setView(center, zoom, options)
-    },
-    redraw () {
-      this.mapObject._onResize()
-      // if (this.config.bounds) {
-      //   this.quietSetBounds()
-      // }
-    },
     /**
      * Get the values stored in geojson features
      */
@@ -494,86 +448,6 @@ export default {
         ret = ret.filter(x => x < Infinity)
       }
       return ret
-    },
-    onHoverFeature ({ target }) {
-      this.highlightFeature(target)
-      this.$emit('hoverFeature', target, this)
-    },
-    onLeaveFeature ({ target }) {
-      this.unhighlightFeature(target)
-      this.$emit('leaveFeature', target, this)
-    },
-    highlightFeature (target, style) {
-      style = style || {
-        opacity: 0.4,
-        fillOpacity: 0.08,
-        fillColor: '#fe9929',
-      }
-      // target is a GeoJSON layer
-      target.setStyle(style).bringToFront()
-      this.hovering = true
-      this.lastHoverTarget = target
-    },
-    unhighlightFeature (target) {
-      this.hovering = false
-      this.resetStyle(target)
-      target.bringToBack()
-    },
-    /**
-     * Find the layer with the same id
-     */
-    findLayer ({ feature }) {
-      // the leaflet geojson object
-      let id = feature.id
-      let geojson = this.$refs.geojson.$geoJSON
-      let leafletId = this.polygonIds[id]
-      return geojson.getLayer(leafletId)
-    },
-    zoomToFeature (e) {
-      if (e.target == this.lastClickTarget) {
-        this.lastClickTarget = null
-        this.zoomOut(e)
-      } else {
-        this.lastClickTarget = e.target
-        this.zoomIn(e)
-      }
-    },
-    onZoomChange (e) {
-      this.onMapUpdate(e)
-      this.updateTooltip()
-    },
-    onMove (e) {
-      if (this.settings.syncMove) {
-        this.$emit('syncMove', e, this)
-      }
-    },
-    /**
-     * Map updated; change location in url
-     */
-    onMapUpdate: _.debounce(function (e) {
-      if (this.fitting) return;
-      let from = this.config
-      let to = {
-        ...from,
-        center: this.getCenter(),
-        // handle float precision error
-        zoom: this.getZoom()
-      }
-      this.config.zoom = to.zoom
-      this.config.center = to.center
-      this.updateURL(to, from)
-      this.resetStyle()
-    }, 400),
-    onControlUpdate (to) {
-      var from = this.config
-      to = { ...from, ...to }
-      this.updateURL(to, from)
-    },
-    /**
-     * Move map will update the url
-     */
-    updateURL (to, from) {
-      this.$emit('updateURL', to, from, this)
     },
   },
   created () {

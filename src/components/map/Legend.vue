@@ -1,6 +1,6 @@
 <template>
   <div class="map-control map-legend" :class="showLegend ? 'active' : ''">
-    <div class="m2m-zoom-toggler" @click="showLegend = !showLegend">
+    <div class="m2m-zoom-toggler is-clickable" @click="showLegend = !showLegend">
      <i class="el-icon-arrow-up"></i>
     </div>
     <el-collapse-transition>
