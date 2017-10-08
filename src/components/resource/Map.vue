@@ -33,6 +33,7 @@ const TOPIC_ICON = {
   'education': ['md-school', 'blue'],
   'homeless': ['md-umbrella', 'purple'],
 }
+const DEFAULT_CENTER = [42.01339313, -72.35770328]
 
 export default {
   name: 'm2m-resource-map',
@@ -41,9 +42,8 @@ export default {
     return {
       tile: getTileProvider(),
       mapOptions: {
-        bounds: this.config.center ? undefined : DEFAULT_BOUNDS,
-        center: this.config.center,
-        zoom: this.config.zoom,
+        center: this.config.center || DEFAULT_CENTER,
+        zoom: this.config.zoom || 8.6,
         wheelDebounceTime: 100,
         // wheelPxPerZoomLevel: 100,
         zoomControl: false,
