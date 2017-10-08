@@ -30,18 +30,14 @@ function ensureList(item, attr) {
  * Cleanup the coverage attribute
  */
 function processCoverage(item) {
-  let isWholeMA = false
-  item.coverage = item.coverage.filter((area, i) => {
-    if (isWholeMA || !area) return false
-    if (area === 'MA') {
-      isWholeMA = true
-    }
-    return true
-  }).map((item) => {
-    if (item === 'MA') return 'Whole MA'
-    // "County - City" -> "City"
-    return item.split(' - ').pop()
-  })
+  let isWholeMA = item.coverage.indexOf('MA') != -1
+  if (isWholeMA) {
+    item.coverage = ['Whole MA']
+    return
+  }
+  item.coverage = item.coverage
+    .filter((area) => !!area)
+    .map((item) => item.split(' - ').pop())
 }
 
 /**
