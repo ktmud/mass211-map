@@ -22,7 +22,6 @@
             <ais-input
               autofocus
               placeholder="Search 2-1-1 resources..."
-              type="text"
               size="48"
               :class-names="{'ais-input': 'el-input__inner'}">
             </ais-input>
@@ -61,7 +60,7 @@ import { encodeLocation } from '@/router'
 import ResourceItem from '@/components/resource/Item'
 import _ from 'lodash'
 
-const ZOOM_IN_LEVEL = 14;
+const ZOOM_IN_LEVEL = 13
 
 export default {
   name: 'm2m-resources',
@@ -167,12 +166,14 @@ export default {
     },
     onClickItem (ctx) {
       let latlng = ctx.resource._geoloc
+      let objectID = ctx.resource.objectID
       latlng = {
         lat: latlng.lat,
         // add some offset because the sidebar take some space
-        lng: latlng.lng - 0.01
+        lng: latlng.lng - 0.015
       }
       this.$refs.map.setView(latlng, ZOOM_IN_LEVEL)
+      this.$refs.map.openPopup(objectID) // vue components
     },
     onLocationFound (e) {
       this.config.center = [e.latitude, e.longitude]

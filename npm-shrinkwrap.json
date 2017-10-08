@@ -10334,12 +10334,17 @@
       "dev": true
     },
     "vue2-leaflet": {
-      "version": "0.0.50",
-      "resolved": "https://registry.npmjs.org/vue2-leaflet/-/vue2-leaflet-0.0.50.tgz",
-      "integrity": "sha1-RIPB3ka2j9d+UoV8WKCZQsE1RC8=",
+      "version": "github:ktmud/Vue2Leaflet#b6a746a8c40b43c2f927d78e356673f01712f5fe",
       "requires": {
-        "leaflet": "1.1.0",
+        "leaflet": "1.2.0",
         "vue": "2.3.4"
+      },
+      "dependencies": {
+        "leaflet": {
+          "version": "1.2.0",
+          "resolved": "https://registry.npmjs.org/leaflet/-/leaflet-1.2.0.tgz",
+          "integrity": "sha512-Bold8phAE6WcRsuwhofrQ7cOK1REFHaYIkKuj7+TBYK3ONKRpGGIb5oXR5akYotFnrWN0TWKh6Svlhflm3dogg=="
+        }
       }
     },
     "vue2-leaflet-markercluster": {

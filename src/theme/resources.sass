@@ -11,6 +11,8 @@ $text-color: #8492A6;
   .alt-name
     font-style: italic;
     margin: -2px 0 3px;
+  .desc
+    margin: 0 0 6px;
   .website a
     display: inline-block;
     max-width: 24em;
@@ -37,7 +39,7 @@ $text-color: #8492A6;
 
 .ais-panel
   background: #fff;
-  width: 400px;
+  width: 360px;
   bottom: 0;
   border-radius: 0 2px 0 0;
   left: 0;
@@ -45,6 +47,16 @@ $text-color: #8492A6;
   transition: left 0.5s ease-in-out;
   &.folded
     left: -400px;
+  input[type=search]
+    &::-ms-clear, &::-ms-reveal
+      display: none;
+      width : 0;
+      height: 0;
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration
+      display: none;
   form
     border-radius: 0 2px 0 0;
     background: $search-header-color;

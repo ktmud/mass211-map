@@ -195,7 +195,7 @@ export default {
       if (!this.geojson.features) {
         return ret
       }
-      let geojson = this.$refs.geojson.$geoJSON
+      let geojson = this.$refs.geojson.mapObject
       geojson.getLayers().forEach((layer) => {
         ret[layer.feature.id] = geojson.getLayerId(layer)
       })
@@ -283,7 +283,7 @@ export default {
     findLayer ({ feature }) {
       // the leaflet geojson object
       let id = feature.id
-      let geojson = this.$refs.geojson.$geoJSON
+      let geojson = this.$refs.geojson.mapObject
       let leafletId = this.polygonIds[id]
       return geojson.getLayer(leafletId)
     },
@@ -340,9 +340,9 @@ export default {
     },
     resetStyle (target) {
       if (target) {
-        this.$refs.geojson.$geoJSON.resetStyle(target)
+        this.$refs.geojson.mapObject.resetStyle(target)
       } else {
-        this.$refs.geojson.$geoJSON.setStyle(this.geojsonOptions.style)
+        this.$refs.geojson.mapObject.setStyle(this.geojsonOptions.style)
       }
       this.resetHoverTarget()
     },
@@ -428,7 +428,7 @@ export default {
         }
       }
       if (update) {
-        this.$refs.geojson.$geoJSON.eachLayer((layer) => {
+        this.$refs.geojson.mapObject.eachLayer((layer) => {
           layer.bindTooltip(this.tooltip(layer.feature))
         })
       }

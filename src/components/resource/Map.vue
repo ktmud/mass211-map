@@ -1,12 +1,38 @@
 <template>
     <v-map ref="map" :options="mapOptions">
-        <v-tilelayer :url="tile.url" :attribution="tile.attribution">
-        </v-tilelayer>
-        <v-marker-cluster :options="clusterOptions">
-          <v-marker v-for="(item, index) in markers"
-           :icon="item.icon"
-           :key="index" :lat-lng="item.latlng">
-              <v-popup :content="item.tooltipContent"></v-popup>
+        <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
+        <v-marker-cluster :options="clusterOptions" ref="cluster" style="display:none;">
+          <v-marker v-for="(item, index) in markers" ref="markers"
+           :icon="markerIcon(item)" :key="item.objectID" :lat-lng="item._geoloc">
+              <v-popup class="resource-info"
+               :options="{ maxWidth: 320 }">
+                <h3>{{ item.name || '[UNKNOWN RESOURCE]' }}</h3>
+                <div class="details">
+                  <div class="alt-name" v-if="item.name_alt">
+                    <em>a.k.a. </em> {{ item.name_alt }}
+                  </div>
+                  <div class="addr1" v-if="item.address">{{ item.address || '' }}</div>
+                  <div class="addr2" v-if="item.zip || item.city">
+                    {{ item.city ? item.city + ', ' : '' }} MA {{item.zip || ''}}
+                  </div>
+                  <div class="website" v-if="item.website">
+                    <a :title="item.website" :href="item.website" target="_blank">{{ item.website }}</a>
+                  </div>
+                </div>
+                <ul class="attrs">
+                  <li class="desc" v-if="item.desc" v-html="item.desc.replace('\n', '<br>')"></li>
+                  <li v-if="item.coverage && item.coverage.length">
+                    <strong>Coverage:</strong>
+                    {{ item.coverage.join(', ') }}
+                  </li>
+                  <li class="tags" v-if="item.taxonomy_term && item.taxonomy_term.length">
+                    <strong>Services:</strong>
+                    <span class="tag" v-for="tag in item.taxonomy_term" :key="tag">
+                      {{ tag }}
+                    </span>
+                  </li>
+                </ul>
+              </v-popup>
           </v-marker>
         </v-marker-cluster>
     </v-map>
@@ -63,60 +89,33 @@ export default {
     mapObject () {
       return this.$refs.map.mapObject
     },
-    markers () {
-      let results = this.searchStore.currentResults
-      return results.map(item => {
-        let geoloc = item._geoloc
-        return {
-          'tooltipContent': this.tooltipContent(item),
-          'icon': this.markerIcon(item),
-          // 'address': item.address,
-          // 'name': item.name,
-          // 'name_alt': item.name_alt,
-          // 'website': item.website,
-          // 'zip': item.zip,
-          // 'coverage': item.coverage,
-          // 'taxonomy_term': item.taxonomy_term,
-          'latlng': [geoloc.lat, geoloc.lng]
-        }
+    markerIndices () {
+      let ret = {}
+      this.searchStore.currentResults.forEach((item, i) => {
+        ret[item.objectID] = i
       })
+      return ret
+    },
+    markers () {
+      return this.searchStore.currentResults
     }
   },
   methods: {
-    tooltipContent(item) {
-      let website = '', name_alt = '', coverage = '', tags = '', desc = ''
-      if (item.website) {
-        website = `<div class="website"><a title="${item.website}" href="${item.website}">${item.website}</a></div>`
-      }
-      if (item.name_alt) {
-        name_alt = `<div class="alt-name">${item.name_alt ? 'a.k.a: ' + item.name_alt : ''}</div>`
-      }
-      if (item.coverage) {
-        coverage = `<li class="coverage"><strong>Coverage:</strong> ${item.coverage.join(', ')}</li>`
-      }
-      if (item.desc) {
-        desc = `<li class="desc"><strong>Intro:</strong> ${item.desc.replace('\n', '<br>')}</li>`
-      }
-      if (item.taxonomy_term) {
-        let iblock = (x) => {
-          return `<span class="tag">${x}</span>`
+    getMarker (objectID) {
+      return this.$refs.markers[this.markerIndices[objectID]]
+    },
+    openPopup (objectID) {
+      let marker = this.getMarker(objectID)
+      if (!marker) return
+      let cluster = this.$refs.cluster.mapObject
+      this.$nextTick(() => {
+        let parent = cluster.getVisibleParent(marker.mapObject)
+        if (parent && parent.spiderfy) {
+          parent.spiderfy()
         }
-        tags = `<li class="tags"><strong>Services:</strong> ${item.taxonomy_term.map(iblock).join(' ')}</li>`
-      }
-      return `<div class="resource-info">
-        <h3>${item.name || '[UNKNOWN RESOURCE]'}</h3>
-        <div class="details">
-          ${name_alt}
-          <div class="addr1">${item.address || ''}</div>
-          <div class="addr2">${item.city || '{City}'}, MA ${item.zip || ''}</div>
-          ${website}
-        </div>
-        <ul class="attrs">
-          ${desc}
-          ${coverage}
-          ${tags}
-        </ul>
-      </div>`
+        marker.mapObject.openPopup()
+      })
+      return marker
     },
     markerIcon (item) {
       let [name, color] = this.markerIconInfo(item)

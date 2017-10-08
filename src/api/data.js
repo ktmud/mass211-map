@@ -12,7 +12,7 @@ import forage from 'localforage'
 import { levels, variables } from './vars.yaml'
 import { tileProviders } from './vars.yaml'
 
-const DEFAULT_TILE = 'carto-light'
+const DEFAULT_TILE = 'mapbox-light'
 export const MAX_ZOOM = tileProviders[DEFAULT_TILE].maxZoom || 18
 export const getTileProvider = (name = DEFAULT_TILE) => {
   // fallback to carto-light
@@ -41,8 +41,8 @@ export const DEFAULT_BOUNDS = L.latLngBounds(
   L.latLng(41, -74)
 )
 export const MAX_BOUNDS = L.latLngBounds(
-  L.latLng(48, -60),
-  L.latLng(35, -83)
+  L.latLng(55, -55),
+  L.latLng(30, -90)
 )
 
 // process variables

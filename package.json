@@ -31,7 +31,7 @@
     "vue-instantsearch": "^1.0.1",
     "vue-observe-visibility": "^0.3.1",
     "vue-router": "^2.3.1",
-    "vue2-leaflet": "0.0.50",
+    "vue2-leaflet": "github:ktmud/Vue2Leaflet",
     "vue2-leaflet-markercluster": "github:ktmud/vue2-leaflet-markercluster",
     "vuex": "^2.3.1",
     "vuex-router-sync": "^4.2.0",

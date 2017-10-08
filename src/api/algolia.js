@@ -17,9 +17,31 @@ function processHighlight(item, attr, ensureList = false) {
 }
 
 function ensureList(item, attr) {
+  if (item[attr] == null) {
+    item[attr] = []
+    return
+  }
   if (!Array.isArray(item[attr])) {
     item[attr] = [item[attr]]
   }
+}
+
+/**
+ * Cleanup the coverage attribute
+ */
+function processCoverage(item) {
+  let isWholeMA = false
+  item.coverage = item.coverage.filter((area, i) => {
+    if (isWholeMA || !area) return false
+    if (area === 'MA') {
+      isWholeMA = true
+    }
+    return true
+  }).map((item) => {
+    if (item === 'MA') return 'Whole MA'
+    // "County - City" -> "City"
+    return item.split(' - ').pop()
+  })
 }
 
 /**
@@ -34,6 +56,7 @@ function preprocess(arr, idProp = 'objectID') {
     ensureList(item, 'coverage')
     ensureList(item, 'topic')
     processHighlight(item, 'name')
+    processCoverage(item)
     // processHighlight(item, 'taxonomy_term', true)
     seen[item[idProp]] = 1
     return true
