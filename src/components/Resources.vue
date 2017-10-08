@@ -172,7 +172,8 @@ export default {
         // add some offset because the sidebar take some space
         lng: latlng.lng - 0.015
       }
-      this.$refs.map.setView(latlng, ZOOM_IN_LEVEL)
+      let zoom = Math.max(ZOOM_IN_LEVEL, this.zoom)
+      this.$refs.map.setView(latlng, zoom)
       this.$refs.map.openPopup(objectID) // vue components
     },
     onLocationFound (e) {
