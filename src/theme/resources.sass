@@ -3,12 +3,25 @@ $text-color-light: #8492A6;
 $panel-width: 360px;
 
 .ais-index .leaflet-popup-content-wrapper
+  padding: 0;
+  background: none;
+.ais-index .leaflet-popup-content
+  padding: 0;
+  margin: 0;
+  background: none;
+
+.resource-popup
+  padding: 1em 1.4em;
   border-radius: 0 4px 4px 4px;
+  background: #fff;
 
 .resource-info
   font-size: 13px;
   h3
-    margin: 6px 0;
+    margin: 0 0 6px;
+    font-weight: 500;
+  strong
+    font-weight: 500;
   .alt-name
     font-style: italic;
     margin: -2px 0 3px;
@@ -26,7 +39,7 @@ $panel-width: 360px;
     margin-top: 5px;
     padding-top: 5px;
     list-style: none;
-    max-height: 10em;
+    max-height: 13em;
     overflow: auto;
   .tags
     margin-top: 4px;
@@ -174,6 +187,12 @@ $panel-width: 360px;
   .tag-blue
     color: #39a9db;
     border-color: lighten(#39a9db, 28);
+  .tag-cadetblue
+    color: #446877;
+    border-color: lighten(#446877, 35);
+  .tag-beige
+    color: #ffbd76;
+    border-color: lighten(#ffbd76, 15);
   .tag-pink
     color: #39a9db;
     border-color: lighten(#39a9db, 30);
@@ -195,3 +214,7 @@ $panel-width: 360px;
   top: -17px;
   left: 0;
   border-radius: 4px 4px 0 0;
+
+.awesome-marker i
+  font-size: 16px;
+  margin-top: 9px;

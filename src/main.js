@@ -1,5 +1,9 @@
 // stylesheets
 import 'leaflet/dist/leaflet.css'
+import 'ionicons/dist/css/ionicons.css'
+import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
+import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
+
 import './theme/index.sass'
 import '../theme/index.css'
 
@@ -14,10 +18,7 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import AsyncComputed from 'vue-async-computed'
 
 // ========= map =============
-import 'ionicons/dist/css/ionicons.css'
-import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
-import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.js'
 
 Vue.config.productionTip = false

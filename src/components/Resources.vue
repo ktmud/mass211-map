@@ -24,10 +24,8 @@
         </ais-search-box>
         <div class="ais-panel-body">
           <div class="resource-list" v-if="results">
-            <m2m-resource-item v-for="(resource, key) in results"
-             :key="resource.objectID"
-             :resource="resource"
-             @click="onClickItem">
+            <m2m-resource-item v-for="(resource, index) in results"
+             :key="index" :resource="resource" @click="onClickItem">
             </m2m-resource-item>
           </div>
           <div v-if="!loading && hasMore" class="load-more" v-observe-visibility="loadMore">
@@ -169,33 +167,42 @@ export default {
         this.tooltipContent = this.foldPanel ? 'Expand side panel' : 'Collapse side panel'
       })
     },
+    getPopupHeight (marker) {
+      let el = marker._popup._content
+       // default height is 320, add +40 for the ref count ribbon and the margin
+      let height = el._height || ((el.clientHeight || 320) + 40)
+      el._height = height
+      return height
+    },
     onClickItem (ctx) {
-      let latlng = ctx.resource._geoloc
+      let $map = this.$refs.map, map = $map.mapObject
       let objectID = ctx.resource.objectID
+      let $marker = $map.getMarker(objectID)
+      if (!$marker) return
+      let latlng = $marker.mapObject.getLatLng()
       latlng = {
         lat: latlng.lat,
         // add some offset because the sidebar take some space
         lng: latlng.lng
       }
-      let $map = this.$refs.map, map = $map.mapObject
       let zoom = Math.max(ZOOM_IN_LEVEL, map.getZoom() || ZOOM_IN_LEVEL)
-      let curpoint = map.project(map.getCenter())  // current point
+      let curpoint = map.project(map.getCenter(), zoom)  // current point
       let point = map.project(latlng, zoom)  // target point
-      point = point.subtract([175, 60])  // offset by the sidebar width
+      let halfHeight = this.getPopupHeight($marker.mapObject) / 2
+      point = point.subtract([175, halfHeight])  // offset by the sidebar width and popup height
       latlng = map.unproject(point, zoom)
       if (point.distanceTo(curpoint) < 600) {
         map.setView(latlng, zoom)
-        $map.openPopup(objectID) // vue components
       } else {
         map.flyTo(latlng, zoom, {
           duration: 0.7,
         })
-        map.once('moveend', () => {
-          this.$nextTick(function() {
-            $map.openPopup(objectID) // vue components
-          })
-        })
       }
+      map.once('moveend', () => {
+        setTimeout(() => {
+          $map.openPopup(objectID) // vue components
+        }, 50)
+      })
     },
     onLocationFound (e) {
       this.config.center = [e.latitude, e.longitude]

@@ -151,14 +151,19 @@ export const settings = {
 
 export const ICON_DEFAULT = ['md-home', 'blue']
 export const TOPIC_ICON = {
-  'food/cloth': ['md-pizza', 'orange'],
-  'legal': ['md-filing', 'blue'],
+  'food/cloth': ['md-leaf', 'blue'],
+  'income': ['logo-usd', 'blue'],
+  'housing': ['md-home', 'blue'],
   'health': ['md-medical', 'red'],
+  'mental': ['md-medical', 'red'],
   'care/companion': ['md-person', 'lightgray'],
   'community': ['md-people', 'darkpurple'],
-  'income': ['md-cash', 'green'],
-  'childcare': ['md-ionitron', 'pink'],
-  'education': ['md-school', 'blue'],
+  'childcare': ['md-ionitron', 'green'],
+  'education': ['md-school', 'green'],
+  'youth help': ['md-body', 'green'],
+  'infoservice': ['md-call', 'cadetblue'],
+  'legal': ['md-filing', 'cadetblue'],
+  'government': ['md-filing', 'cadetblue'],
   'homeless': ['md-umbrella', 'purple'],
 }
 export const getTopicIcon = function (topic) {
