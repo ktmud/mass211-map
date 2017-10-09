@@ -16,7 +16,9 @@
         <ais-search-box>
           <div class="el-input">
             <button type="submit" class="el-input__icon el-icon-search is-clickable"></button>
-            <ais-clear class="el-input__icon is-clickable el-icon-close">
+            <ais-clear
+             class="el-input__icon is-clickable el-icon-close"
+            >
               <template><i class=""></i></template>
             </ais-clear>
             <ais-input></ais-input>
@@ -106,14 +108,9 @@ export default {
   },
   watch: {
     'store.query': _.debounce(function() {
-      let urlQuery = (this.store.query || '-').replace(/ /g, '+')
-      this.resetGeoSearch()
-      this.$router.push({
-        params: {
-           query: urlQuery
-        },
-      });
-    }, 600),
+      this.updateQueryInURL()
+      this.resetResultsScroll()
+    }, 350),
     // 'config.center': _.debounce(function() {
     //   if (this.zoom > 10) {
     //     this.geoSearch()
@@ -142,6 +139,18 @@ export default {
     },
     resetGeoSearch () {
       this.store._helper.state.aroundLatLng = undefined
+    },
+    resetResultsScroll () {
+      this.$el.querySelector('.ais-panel-body').scrollTop = 0
+    },
+    updateQueryInURL () {
+      let urlQuery = (this.store.query || '-').replace(/ /g, '+')
+      this.resetGeoSearch()
+      this.$router.push({
+        params: {
+           query: urlQuery
+        },
+      })
     },
     updateURL (to, from, ctx) {
       let method = 'replace'
