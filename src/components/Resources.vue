@@ -19,12 +19,7 @@
             <ais-clear class="el-input__icon is-clickable el-icon-close">
               <template><i class=""></i></template>
             </ais-clear>
-            <ais-input
-              autofocus
-              placeholder="Search 2-1-1 resources..."
-              size="48"
-              :class-names="{'ais-input': 'el-input__inner'}">
-            </ais-input>
+            <ais-input></ais-input>
           </div>
         </ais-search-box>
         <div class="ais-panel-body">
@@ -66,7 +61,7 @@ export default {
   name: 'm2m-resources',
   mixins: [mixins.FullscreenMixin],
   components: {
-    'm2m-resource-item': ResourceItem
+    'm2m-resource-item': ResourceItem,
   },
   props: {
     config: { type: Object, },
@@ -86,8 +81,8 @@ export default {
     /**
      * Search keyword
      */
-    query() {
-      return (this.store.query || '-').replace(/ /g, '+')
+    query () {
+      return this.store.query
     },
     zoom () {
       return this.config.zoom
@@ -104,10 +99,11 @@ export default {
   },
   watch: {
     'store.query': _.debounce(function() {
+      let urlQuery = (this.store.query || '-').replace(/ /g, '+')
       this.resetGeoSearch()
       this.$router.push({
         params: {
-           query: this.query
+           query: urlQuery
         },
       });
     }, 600),
@@ -170,11 +166,25 @@ export default {
       latlng = {
         lat: latlng.lat,
         // add some offset because the sidebar take some space
-        lng: latlng.lng - 0.015
+        lng: latlng.lng
       }
-      let zoom = Math.max(ZOOM_IN_LEVEL, this.zoom)
-      this.$refs.map.setView(latlng, zoom)
-      this.$refs.map.openPopup(objectID) // vue components
+      let $map = this.$refs.map, map = $map.mapObject
+      let zoom = Math.max(ZOOM_IN_LEVEL, map.getZoom() || ZOOM_IN_LEVEL)
+      let curpoint = map.project(map.getCenter())  // current point
+      let point = map.project(latlng, zoom)  // target point
+      point = point.subtract([175, 60])  // offset by the sidebar width
+      latlng = map.unproject(point, zoom)
+      if (point.distanceTo(curpoint) < 600) {
+        map.setView(latlng, zoom)
+        $map.openPopup(objectID) // vue components
+      } else {
+        map.flyTo(latlng, zoom, {
+          duration: 0.7,
+        })
+        map.once('moveend', () => {
+          $map.openPopup(objectID) // vue components
+        })
+      }
     },
     onLocationFound (e) {
       this.config.center = [e.latitude, e.longitude]

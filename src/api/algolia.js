@@ -32,7 +32,7 @@ function ensureList(item, attr) {
 function processCoverage(item) {
   let isWholeMA = item.coverage.indexOf('MA') != -1
   if (isWholeMA) {
-    item.coverage = ['Whole MA']
+    item.coverage = ['All of MA']
     return
   }
   item.coverage = item.coverage
@@ -74,10 +74,11 @@ export const searchStore = function() {
 
   store._helper.on('result', () => {
     let results = store.currentResults
+    var res = store.results  // new result
     if (store.query == store.currentQuery) {
-      results = preprocess(results.concat(store.results), 'objectID')
+      results = preprocess(results.concat(res), 'objectID')
     } else {
-      results = preprocess(store.results, 'objectID')
+      results = preprocess(res, 'objectID')
       store.currentQuery = store.query
     }
     store.currentResults = results

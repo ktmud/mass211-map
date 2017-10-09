@@ -99,6 +99,9 @@ export const MapMixin = {
     setView (center, zoom, options) {
       this.mapObject.setView(center, zoom, options)
     },
+    flyTo (center, zoom, options) {
+      this.mapObject.flyTo(center, zoom, options)
+    },
     redraw () {
       this.mapObject._onResize()
       // if (this.config.bounds) {

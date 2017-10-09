@@ -12,8 +12,8 @@ import Vue2Leaflet from 'vue2-leaflet'
 import VueAsyncData from 'vue-async-data'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import AsyncComputed from 'vue-async-computed'
-import InstantSearch from 'vue-instantsearch';
 
+// ========= map =============
 import 'ionicons/dist/css/ionicons.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css'
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js'
@@ -22,7 +22,6 @@ import 'leaflet.locatecontrol/dist/L.Control.Locate.min.js'
 
 Vue.config.productionTip = false
 
-Vue.use(InstantSearch);
 Vue.component('v-tilelayer', Vue2Leaflet.TileLayer);
 Vue.component('v-geojson-layer', Vue2Leaflet.GeoJSON);
 Vue.component('v-marker', Vue2Leaflet.Marker);
@@ -44,12 +43,24 @@ L.Icon.Default = function() {
   });
 }
 
+// ====== instance search =============
+import { Index, SearchBox, Results, Clear, PoweredBy } from 'vue-instantsearch'
+import AisInput from '@/components/resource/Input'
+
+Vue.component('ais-index', Index)
+Vue.component('ais-search-box', SearchBox)
+Vue.component('ais-results', Results)
+Vue.component('ais-clear', Clear)
+Vue.component('ais-powered-by', PoweredBy)
+Vue.component('ais-input', AisInput)
+
+// ====== Custom components ============
 import MapControl from "@/components/map/Control"
 import VMap from "@/components/map/Map"
 import ResourceMap from "@/components/resource/Map"
-Vue.component('map-control', MapControl);
-Vue.component('v-map', VMap);
-Vue.component('m2m-resource-map', ResourceMap);
+Vue.component('map-control', MapControl)
+Vue.component('v-map', VMap)
+Vue.component('m2m-resource-map', ResourceMap)
 
 Vue.use(ElementUI)
 // Vue.use(Vuex)

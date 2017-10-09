@@ -81,6 +81,7 @@ export default {
       },
       clusterOptions: {
         spiderfyOnMaxZoom: true,
+        maxClusterRadius: 50,
         // disableClusteringAtZoom: 16,
       }
     }
