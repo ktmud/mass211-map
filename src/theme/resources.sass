@@ -1,9 +1,9 @@
 $search-header-color: #78a8d8;
-$text-color: #8492A6;
+$text-color-light: #8492A6;
 $panel-width: 360px;
 
-.leaflet-popup-content-wrapper
-  border-radius: 6px;
+.ais-index .leaflet-popup-content-wrapper
+  border-radius: 0 4px 4px 4px;
 
 .resource-info
   font-size: 13px;
@@ -73,7 +73,7 @@ $panel-width: 360px;
   background: #fff;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
   border-radius: 0 2px 2px 0;
-  color: $text-color;
+  color: $text-color-light;
   cursor: pointer;
   font-size: 9px;
   left: 100%;
@@ -94,7 +94,7 @@ $panel-width: 360px;
 
 
 .resource-list
-  color: $text-color;
+  color: $text-color-light;
   font-size: 13px;
   font-weight: 300;
   // highlight
@@ -148,6 +148,50 @@ $panel-width: 360px;
   padding: 20px 1em 10px;
   position: absolute;
   border: 1px solid #eee;
+  .total
+    font-size: 12px;
+    color: $text-color-light;
+    float: left;
 
 .ais-powered-by
   text-align: right;
+
+
+.resource-list
+  .tag
+    color: #fff;
+    text-shadow: none;
+    border-bottom: 1px solid;
+  .tag-lightgray
+    color: #a3a3a3;
+    border-bottom: 1px solid lighten(#a3a3a3, 20);
+  .tag-red
+    color: #d33e2a;
+    border-bottom: 1px solid lighten(#d33e2a, 35);
+  .tag-green
+    color: #70ad25;
+    border-color: lighten(#70ad25, 30);
+  .tag-blue
+    color: #39a9db;
+    border-color: lighten(#39a9db, 28);
+  .tag-pink
+    color: #39a9db;
+    border-color: lighten(#39a9db, 30);
+  .tag-orange
+    color: #f3952f;
+    border-color: lighten(#f3952f, 25);
+  .tag-purple
+    color: #cc51b5;
+    border-color: lighten(#cc51b5, 25);
+  .tag-darkpurple
+    color: #593969;
+    border-color: lighten(#593969, 45);
+
+.leaflet-popup .referral-count
+  background: #334257;
+  color: #fff;
+  padding: 2px 0.5em 1px;
+  position: absolute;
+  top: -17px;
+  left: 0;
+  border-radius: 4px 4px 0 0;

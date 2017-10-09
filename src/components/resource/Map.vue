@@ -2,32 +2,35 @@
     <v-map ref="map" :options="mapOptions">
         <v-tilelayer :url="tile.url" :attribution="tile.attribution"></v-tilelayer>
         <v-marker-cluster :options="clusterOptions" ref="cluster" style="display:none;">
-          <v-marker v-for="(item, index) in markers" ref="markers"
-           :icon="markerIcon(item)" :key="item.objectID" :lat-lng="item._geoloc">
+          <v-marker v-for="(resource, index) in markers" ref="markers"
+           :icon="markerIcon(resource)" :key="resource.objectID" :lat-lng="resource._geoloc">
               <v-popup class="resource-info"
                :options="{ maxWidth: 320 }">
-                <h3>{{ item.name || '[UNKNOWN RESOURCE]' }}</h3>
+                <h3>{{ resource.name || '[UNKNOWN RESOURCE]' }}</h3>
                 <div class="details">
-                  <div class="alt-name" v-if="item.name_alt">
-                    <em>a.k.a. </em> {{ item.name_alt }}
+                  <div class="alt-name" v-if="resource.name_alt">
+                    <em>a.k.a. </em> {{ resource.name_alt }}
                   </div>
-                  <div class="addr1" v-if="item.address">{{ item.address || '' }}</div>
-                  <div class="addr2" v-if="item.zip || item.city">
-                    {{ item.city ? item.city + ', ' : '' }} MA {{item.zip || ''}}
+                  <div class="addr1" v-if="resource.address">{{ resource.address || '' }}</div>
+                  <div class="addr2" v-if="resource.zip || resource.city">
+                    {{ resource.city ? resource.city + ', ' : '' }} MA {{resource.zip || ''}}
                   </div>
-                  <div class="website" v-if="item.website">
-                    <a :title="item.website" :href="item.website" target="_blank">{{ item.website }}</a>
+                  <div class="website" v-if="resource.website">
+                    <a :title="resource.website" :href="resource.website" target="_blank">{{ resource.website }}</a>
                   </div>
                 </div>
+                <div class="referral-count" v-if="resource.n_call">
+                    <strong>{{ formatBigNum(resource.n_call) }}</strong> <em>referrals per year</em>
+                </div>
                 <ul class="attrs">
-                  <li class="desc" v-if="item.desc" v-html="item.desc.replace('\n', '<br>')"></li>
-                  <li v-if="item.coverage && item.coverage.length">
+                  <li class="desc" v-if="resource.desc" v-html="resource.desc.replace('\n', '<br>')"></li>
+                  <li v-if="resource.coverage && resource.coverage.length">
                     <strong>Coverage:</strong>
-                    {{ item.coverage.join(', ') }}
+                    {{ resource.coverage.join(', ') }}
                   </li>
-                  <li class="tags" v-if="item.taxonomy_term && item.taxonomy_term.length">
+                  <li class="tags" v-if="resource.taxonomy_term && resource.taxonomy_term.length">
                     <strong>Services:</strong>
-                    <span class="tag" v-for="tag in item.taxonomy_term" :key="tag">
+                    <span class="tag" v-for="tag in resource.taxonomy_term" :key="tag">
                       {{ tag }}
                     </span>
                   </li>
@@ -41,24 +44,13 @@
 <script>
 import { Component } from 'vue-instantsearch'
 import { MapMixin } from '@/api/mixins'
+import { formatBigNum, ICON_DEFAULT, TOPIC_ICON } from '@/api/data'
 
 import {
   getTileProvider,
   MAX_BOUNDS, MAX_ZOOM, DEFAULT_BOUNDS
 } from '@/api/data'
 
-const ICON_DEFAULT = ['md-home', 'blue']
-const TOPIC_ICON = {
-  'food/cloth': ['md-pizza', 'orange'],
-  'legal': ['md-filing', 'blue'],
-  'health': ['md-medical', 'red'],
-  'care/companion': ['md-person', 'lightgray'],
-  'community': ['md-people', 'darkpurple'],
-  'income': ['md-cash', 'green'],
-  'childcare': ['md-ionitron', 'pink'],
-  'education': ['md-school', 'blue'],
-  'homeless': ['md-umbrella', 'purple'],
-}
 const DEFAULT_CENTER = [42.01339313, -72.35770328]
 
 export default {
@@ -132,7 +124,8 @@ export default {
         if (topic in TOPIC_ICON) return TOPIC_ICON[topic]
       }
       return ICON_DEFAULT
-    }
+    },
+    formatBigNum: formatBigNum
   },
   mounted () {
     let map = this.mapObject

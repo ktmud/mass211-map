@@ -19,7 +19,6 @@ export const getTileProvider = (name = DEFAULT_TILE) => {
   return tileProviders[name]
 }
 
-
 const variable_finder = {}
 const cache = {}
 const fetch = window.fetch
@@ -131,6 +130,8 @@ export const getFormat = (variable, vals) => {
   return variable._format
 }
 
+export const formatBigNum = d3format(',.1s')
+
 export const findVariable = (name) => {
   return variable_finder[name]
 }
@@ -146,4 +147,20 @@ export const settings = {
     let val = ctx.settings
     return forage.setItem('map-' + ctx.config.id, val)
   }
+}
+
+export const ICON_DEFAULT = ['md-home', 'blue']
+export const TOPIC_ICON = {
+  'food/cloth': ['md-pizza', 'orange'],
+  'legal': ['md-filing', 'blue'],
+  'health': ['md-medical', 'red'],
+  'care/companion': ['md-person', 'lightgray'],
+  'community': ['md-people', 'darkpurple'],
+  'income': ['md-cash', 'green'],
+  'childcare': ['md-ionitron', 'pink'],
+  'education': ['md-school', 'blue'],
+  'homeless': ['md-umbrella', 'purple'],
+}
+export const getTopicIcon = function (topic) {
+  return TOPIC_ICON[topic] || ICON_DEFAULT
 }

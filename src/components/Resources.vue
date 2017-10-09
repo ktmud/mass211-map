@@ -35,6 +35,12 @@
           </div>
         </div>
         <div class="ais-panel-footer">
+          <span class="total" v-if="!store.neverLoad">
+            <span class="current" v-if="total">
+              {{ store.currentResults.length }} of
+            </span>
+            {{ total }} sites
+          </span>
           <ais-powered-by></ais-powered-by>
         </div>
       </div>
@@ -55,7 +61,7 @@ import { encodeLocation } from '@/router'
 import ResourceItem from '@/components/resource/Item'
 import _ from 'lodash'
 
-const ZOOM_IN_LEVEL = 13
+const ZOOM_IN_LEVEL = 12
 
 export default {
   name: 'm2m-resources',
@@ -83,6 +89,9 @@ export default {
      */
     query () {
       return this.store.query
+    },
+    total () {
+      return this.store.totalResults
     },
     zoom () {
       return this.config.zoom
@@ -182,7 +191,9 @@ export default {
           duration: 0.7,
         })
         map.once('moveend', () => {
-          $map.openPopup(objectID) // vue components
+          this.$nextTick(function() {
+            $map.openPopup(objectID) // vue components
+          })
         })
       }
     },
