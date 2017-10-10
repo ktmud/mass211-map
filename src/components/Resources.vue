@@ -90,6 +90,9 @@ export default {
     query () {
       return this.store.query
     },
+    queryInURL () {
+      return (this.store.query || '-').replace(/ /g, '+')
+    },
     total () {
       return this.store.totalResults
     },
@@ -137,18 +140,19 @@ export default {
       store.start()
       store.refresh()
     },
-    resetGeoSearch () {
-      this.store._helper.state.aroundLatLng = undefined
+    resetGeoSearch (force) {
+      if (force || !this.isNearbyOn()) {
+        this.store._helper.state.aroundLatLng = undefined
+      }
     },
     resetResultsScroll () {
       this.$el.querySelector('.ais-panel-body').scrollTop = 0
     },
     updateQueryInURL () {
-      let urlQuery = (this.store.query || '-').replace(/ /g, '+')
       this.resetGeoSearch()
       this.$router.push({
         params: {
-           query: urlQuery
+           query: this.queryInURL
         },
       })
     },
@@ -162,7 +166,7 @@ export default {
       let route = {
         name: this.$route.name,
         params: {
-          query: this.query || '-',
+          query: this.queryInURL || '-',
           location: encodeLocation(to.center, to.zoom)
         },
         query: this.$route.query
@@ -216,6 +220,9 @@ export default {
     onLocationFound (e) {
       this.config.center = [e.latitude, e.longitude]
       this.geoSearch()
+    },
+    isNearbyOn () {
+      return this.$refs.map.isNearbyOn()
     }
   },
   mounted () {

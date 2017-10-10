@@ -155,16 +155,29 @@ export default {
         this.mapObject._popup.update()
       }
     },
+    /**
+     * Whether the nearby search is on
+     */
+    isNearbyOn: function() {
+      let lc = this._locateControl
+      return lc._active && lc._event
+    },
     formatBigNum: formatBigNum
   },
   mounted () {
     let map = this.mapObject
     // add zoom controls
     L.control.zoom({ position: 'bottomright' }).addTo(map)
-    L.control.locate({
+    this._locateControl = L.control.locate({
       position: 'topright',
       icon: 'icon ion-ios-locate-outline',
-      iconLoading: 'el-icon-loading'
+      iconLoading: 'el-icon-loading',
+      locateOptions: {
+        maxZoom: 14,
+        watch: true,  // if you overwrite this, visualization cannot be updated
+        setView: false // have to set this to false because we have to
+        // do setView manually
+      }
     }).addTo(map);
     map.on('locationfound', (e) => this.$emit('locationfound', e))
     map.on('dragend', (e) => this.onMapUpdate(e))
