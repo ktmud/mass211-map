@@ -13,7 +13,7 @@ import { extent } from 'd3-array'
  * Create a color pallete for a set
  * of continous values
  */
-export const colorize = (values, color, balanced=false) => {
+export const colorize = (values, color, balanced=false, reverse=false) => {
   let domain
   if (balanced) {
     let max = Math.max(...values)
@@ -24,6 +24,9 @@ export const colorize = (values, color, balanced=false) => {
     domain = [max, -max]
   } else {
     domain = extent(values)
+  }
+  if (reverse) {
+    domain = domain.reverse()
   }
   let inter = d3sc['interpolate' + (color || 'Blues')]
   let ret = scaleSequential(inter)

@@ -143,7 +143,12 @@ export default {
         return (item) => '#eee'
       }
       var variable = this.variable
-      var color = colorize(this.logvals, this.meta.color, this.meta.balanced)
+      var color = colorize(
+        this.logvals,
+        this.meta.color,
+        this.meta.balanced,
+        this.meta.reversed
+      )
       var ret = (item) => {
         if (item.properties) {
           item = item.properties[variable]

@@ -11,7 +11,7 @@ variables:
     options:
       - name: p_call
         label: 'Total calls per 1,000 people'
-        desc: 'Total number of 211 calls per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
+        desc: 'Total number of 211 calls per 1,000 people during a 14-month period (06/2016 ~ 08/2017)'
       - name: p_call_childcare
         label: 'for Child Care'
         desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
@@ -35,10 +35,10 @@ variables:
       - name: p_call_income
         label: 'for Income Maitanence'
         desc: 'Number of 211 calls for basic income or basic needs expense assistance.'
-      - name: p_called_before
-        label: 'Repetitive Callers'
-        desc: 'Percentage of calls from people who called before. Observations with a total number of less than
-               10 calls are ignored.'
+      # - name: p_called_before
+      #   label: 'Repetitive Callers'
+      #   desc: 'Percentage of calls from people who called before. Observations with a total number of less than
+      #          10 calls are ignored.'
       - name: residual
         label: 'Prediction Redisual'
         format: '.2f'
@@ -47,39 +47,35 @@ variables:
         balanced: true
         desc: 'The difference between predicted number of calls and the actual numbers.'
 
-
-  - label: 'Public Health'
-    requires:
-      town: 1
-      county: 1
-    options:
-      - name: fertility
-        label: Fertility rate
-      - name: fertility_black
-        label: Fertility among black women
-      - name: fertility_white
-        label: Fertility among white women
-      - name: infantmortality
-        label: Infant Mortality
-        format: '.0f'
-        units: deaths per 1,000 live births
-        unitsShort: per 1,000 births
-      - name: moms_no_care
-        label: Lack prenatal care
-        desc: Mothers not receiving prenatal care in first trimester
-      - name: moms_pub_care
-        label: Public funded prenatal care
-        desc: Mothers receiving public funded prenatal care
-
   - label: Demographics (2015 Census Data)
     options:
       - name: MedHouseIncome
         label: Median house income
         format: '$,.2s'
         units: ' / year'
+      - name: MedHousingCost
+        label: Median monthly housing cost
+        format: '$,.2s'
+        units: ' / month'
+      - name: MedHouseValue
+        label: Median house value
+        format: '$,.2s'
+      - name: MedRentAsIncomePct
+        label: Rent as percentage of income
+        desc: Median value of rent as percentage of income for households living
+              in renting properties.
       - name: BelowPoverty
         label: In poverty
         desc: Percentage of people with an earning below poverty line
+      - name: HI_PrivateInsured
+        label: Have private health insurance
+        desc: Proportion of residents who have private health insurances, either
+              through employment or self-purchase.
+      - name: HI_PublicInsured
+        label: Have public health insurance
+        desc: Proportion of people who are covered by public health insurance,
+              such as Medicaid. May overlap with those who have private health
+              insurance.
       - name: AtLeastBachelor
         label: Higher education rate
         desc: Percentage of people with at least a Bachelor degree
@@ -88,6 +84,8 @@ variables:
       - name: GINI
         label: Gini coefficient
         format: '.4f'
+        desc: Gini Coefficient for income equality. The higher the number,
+              the more ineuality there exists.
       - name: White
         label: 'White'
         desc: Percentage of white population (2015)
@@ -112,6 +110,30 @@ variables:
         label: Population Density
         format: ',.0f'
         unitsShort: ' / mi<sup>2</sup>'
+
+  - label: 'Public Health'
+    requires:
+      town: 1
+      county: 1
+    options:
+      - name: fertility
+        label: Fertility rate
+      - name: fertility_black
+        label: Fertility among black women
+      - name: fertility_white
+        label: Fertility among white women
+      - name: infantmortality
+        label: Infant Mortality
+        format: '.0f'
+        units: deaths per 1,000 live births
+        unitsShort: per 1,000 births
+      - name: moms_no_care
+        label: Lack prenatal care
+        desc: Mothers not receiving prenatal care in first trimester
+      - name: moms_pub_care
+        label: Public funded prenatal care
+        desc: Mothers receiving public funded prenatal care
+
 
 # -- tile prodivers for map
 tileProviders:
