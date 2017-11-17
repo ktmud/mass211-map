@@ -200,5 +200,27 @@ $control_index: 402;
   .map-0, .map-3
     border-right: 1px solid #ccc;
 
+table.item-props
+  text-align: right;
+  font-size: 14px;
+  th
+    padding: 6px 8px 0;
+  td
+    padding: 0 8px 5px;
+  tbody
+    border-bottom: 1px solid #ccc;
+    &:last-child
+      border-bottom: none;
+  th
+    font-size: 11px;
+    font-weight: 500;
+    
+.high-volumn .var-p_call
+  font-weight: 600;
+.high-residual .var-p_call
+  color: rgb(175, 35, 48);
+.low-residual .var-p_call
+  color: rgb(36, 103, 166);
+
 @import "./legend.sass";
 @import "./resources.sass";

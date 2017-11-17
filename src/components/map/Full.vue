@@ -112,8 +112,8 @@ export default {
      * How big is considered big zoom level
      */
     ZOOM_BIG () {
-      if (this.geounit == 'county') return 9.5
-      return 10
+      if (this.geounit == 'county') return 6
+      return 8
     },
     fillOpacity () {
       return opacityScale(this.zoom)
@@ -392,29 +392,43 @@ export default {
       const format = (name) => {
         return getFormat(name)(item[name])
       }
+      let tbl_cls = item.p_call > 6 ? 'high-volumn ' : ''
+      if (item.residual >= 1) {
+        tbl_cls += 'high-residual';
+      } else if (item.residual < 1) {
+        tbl_cls += 'low-residual';
+      }
       return `<div class="item-detail">
             <h4>
               <strong>${this.itemName(item)}</strong>:
               ${this.formatted(item)}
               ${this.meta.units}
             </h4>
-            <table class="item-props">
+            <table class="item-props ${tbl_cls}">
+            <tbody>
               <tr>
                 <th>Population</th>
-                <td>${format('TotalPop')}</td>
+                <th>Calls</th>
+                <th>Per 1k</th>
               </tr>
+              <tr>
+                <td>${format('TotalPop')}</td>
+                <td>${format('n_call')}</td>
+                <td class="var-p_call">${format('p_call')}</td>
+              </tr>
+             </tbody>
+             <tbody>
               <tr>
                 <th>Income</th>
-                <td>${format('MedHouseIncome')}</td>
+                <th>In poverty</th>
+                <th>White</th>
               </tr>
               <tr>
-                <th>White</th>
+                <td>${format('MedHouseIncome')}</td>
+                <td>${format('BelowPoverty')}</td>
                 <td>${format('White')}</td>
               </tr>
-              <tr>
-                <th>In poverty</th>
-                <td>${format('BelowPoverty')}</td>
-              </tr>
+             </tbody>
             </table>
         </div>`
     },

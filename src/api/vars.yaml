@@ -9,9 +9,13 @@ levels:
 variables:
   - label: '211 Calls'
     options:
+      - name: n_call
+        label: 'Total number of calls'
+        format: ','
+        desc: 'Total number of 211 calls during a 14-month period (06/2016 ~ 08/2017)'
       - name: p_call
         label: 'Total calls per 1,000 people'
-        desc: 'Total number of 211 calls per 1,000 people during a 14-month period (06/2016 ~ 08/2017)'
+        desc: 'Number of 211 calls per 1,000 people during a 14-month period (06/2016 ~ 08/2017)'
       - name: p_call_childcare
         label: 'for Child Care'
         desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
