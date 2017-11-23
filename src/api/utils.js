@@ -13,17 +13,28 @@ import { extent } from 'd3-array'
  * Create a color pallete for a set
  * of continous values
  */
-export const colorize = (values, color, balanced=false, reverse=false) => {
-  let domain
-  if (balanced) {
-    let max = Math.max(...values)
-    let min = Math.min(...values)
-    if (min < 0) {
-      max = Math.min(-min, max)
+export const colorize = (values,
+  {color, domain, transform='log', balanced=false, reverse=false}
+) => {
+  // apply log transformation to the variable
+  if (transform == 'log') {
+    // 0 should not have any color, so it will not be used in the range
+    values = values.filter(x => x > 0).map(Math.log)
+    if (domain) {
+      domain = domain.map(x => x > 0 ? Math.log(x) : x)
     }
-    domain = [max, -max]
-  } else {
-    domain = extent(values)
+  }
+  if (!domain) {
+    if (balanced) {
+      let max = Math.max(...values)
+      let min = Math.min(...values)
+      if (min < 0) {
+        max = Math.min(-min, max)
+      }
+      domain = [max, -max]
+    } else {
+      domain = extent(values)
+    }
   }
   if (reverse) {
     domain = domain.reverse()

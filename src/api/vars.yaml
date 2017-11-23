@@ -21,9 +21,9 @@ variables:
         desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
       - name: p_call_health
         label: 'for Health Care'
-      - name: p_call_employment
-        label: 'for Employment'
-        desc: 'Help me find a job'
+      # - name: p_call_employment
+      #   label: 'for Employment'
+      #   desc: 'Help me find a job'
       - name: p_call_food
         label: 'for Food'
       - name: p_call_housing
@@ -93,6 +93,9 @@ variables:
       - name: White
         label: 'White'
         desc: Percentage of white population (2015)
+        domain:
+          - 0.45
+          - 1
       - name: Black
         label: 'Black'
       - name: Hispanic
@@ -120,6 +123,36 @@ variables:
       town: 1
       county: 1
     options:
+      - name: p_op_death_2014
+        label: Overdose deaths (2014)
+        format: ',.0f'
+        units: per 100k inhabitants
+        unitsShort: /100k ppl.
+        desc: Number of opiod-related overdose deaths per 100,000 people
+              in the year of 2014.
+        domain:
+          - 0
+          - 150
+      - name: p_op_death_2015
+        label: Overdose deaths (2015)
+        format: ',.0f'
+        units: per 100k inhabitants
+        unitsShort: /100k ppl.
+        desc: Number of opiod-related overdose deaths per 100,000 people
+              in the year of 2014.
+        domain:
+          - 0
+          - 150
+      - name: p_op_death_2016
+        label: Overdose deaths (2016)
+        format: ',.0f'
+        units: per 100k inhabitants
+        unitsShort: /100k ppl.
+        desc: Number of opiod-related overdose deaths per 100,000 people
+              in the year of 2014.
+        domain:
+          - 0
+          - 150
       - name: fertility
         label: Fertility rate
       - name: fertility_black
