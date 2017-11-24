@@ -11,21 +11,32 @@ variables:
     options:
       - name: n_call
         label: 'Total number of calls'
-        format: ','
+        format: ',.1s'
         desc: 'Total number of 211 calls during a 14-month period (06/2016 ~ 08/2017)'
+        domain:
+          - 10
       - name: p_call
         label: 'Total calls per 1,000 people'
         desc: 'Number of 211 calls per 1,000 people during a 14-month period (06/2016 ~ 08/2017)'
+        domain:
+          - 5
       - name: p_call_childcare
         label: 'for Child Care'
-        desc: 'Number of 211 calls pertaining Child Care per 1,000 people in a 10-month period (05/2016 ~ 02/2017)'
+        desc: 'Number of 211 calls pertaining Child Care per 1,000 people a 14-month period (06/2016 ~ 08/2017)'
+        domain:
+          - 0
       - name: p_call_health
         label: 'for Health Care'
+        domain:
+          - 0
       # - name: p_call_employment
       #   label: 'for Employment'
       #   desc: 'Help me find a job'
-      - name: p_call_food
-        label: 'for Food'
+      - name: p_call_food_cloth
+        label: 'for Food/Cloth'
+        desc: 'Number of calls per 1,000 people related to food and cloths'
+        domain:
+          - 0
       - name: p_call_housing
         label: 'for Housing/Shelter'
       - name: p_call_homeless
@@ -33,6 +44,10 @@ variables:
         desc: 'Calls related to housing needs of homeless people or people at risk'
       - name: p_call_mental
         label: 'for Mental Health Issues'
+        desc: 'Calls related to dealing with people with mental health issues'
+      - name: p_call_substance_abuse
+        label: 'for Sunstance Abuse'
+        desc: 'Calls related to dealing with people with substance abuse issues'
       - name: p_call_utilities
         label: 'for Utilities'
         desc: 'Number of 211 calls asking for help with utility bills or service inquiries'
@@ -48,7 +63,7 @@ variables:
         format: '.2f'
         transform: 'raw'
         color: 'RdBu'
-        balanced: true
+        symmetric: true
         desc: 'The difference between predicted number of calls and the actual numbers.'
 
   - label: Demographics (2015 Census Data)

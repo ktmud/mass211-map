@@ -14,7 +14,7 @@ import { extent } from 'd3-array'
  * of continous values
  */
 export const colorize = (values,
-  {color, domain, transform='log', balanced=false, reverse=false}
+  {color, domain, transform='log', symmetric=false, reverse=false}
 ) => {
   // apply log transformation to the variable
   if (transform == 'log') {
@@ -24,18 +24,22 @@ export const colorize = (values,
       domain = domain.map(x => x > 0 ? Math.log(x) : x)
     }
   }
-  if (!domain) {
-    if (balanced) {
-      let max = Math.max(...values)
-      let min = Math.min(...values)
-      if (min < 0) {
-        max = Math.min(-min, max)
-      }
-      domain = [max, -max]
-    } else {
-      domain = extent(values)
+  let [min, max] = extent(values)
+  domain = domain || [min, max]
+  // the variable should be symetric
+  if (symmetric) {
+    if (min < 0) {
+      max = Math.min(-min, max)
     }
+    domain = [max, -max]
   }
+  if (domain[0] == null) {
+    domain[0] = min
+  }
+  if (domain[1] == null) {
+    domain[1] = max
+  }
+  // console.log(domain)
   if (reverse) {
     domain = domain.reverse()
   }
