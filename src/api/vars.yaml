@@ -141,8 +141,8 @@ variables:
       - name: p_op_death_2014
         label: Overdose deaths (2014)
         format: ',.0f'
-        units: per 100k inhabitants
-        unitsShort: /100k ppl.
+        units: per 100k persons
+        unitsShort: /100k persons
         desc: Number of opiod-related overdose deaths per 100,000 people
               in the year of 2014.
         domain:
@@ -151,8 +151,8 @@ variables:
       - name: p_op_death_2015
         label: Overdose deaths (2015)
         format: ',.0f'
-        units: per 100k inhabitants
-        unitsShort: /100k ppl.
+        units: per 100k persons
+        unitsShort: /100k persons
         desc: Number of opiod-related overdose deaths per 100,000 people
               in the year of 2014.
         domain:
@@ -161,13 +161,34 @@ variables:
       - name: p_op_death_2016
         label: Overdose deaths (2016)
         format: ',.0f'
-        units: per 100k inhabitants
-        unitsShort: /100k ppl.
+        units: per 100k persons
+        unitsShort: /100k persons
         desc: Number of opiod-related overdose deaths per 100,000 people
               in the year of 2014.
         domain:
           - 0
           - 150
+      - name: substance_abuse
+        format: ',.1f'
+        units: per 100k persons
+        unitsShort: /100k persons
+        label: Substance abuse treatment
+        desc: Admissions to DPH funded treatment programs per 100k persons in
+              the year of 2011.
+      - name: injection_drug
+        format: ',.1f'
+        units: per 100k persons
+        unitsShort: /100k persons
+        label: Injection drug treatment
+        desc: Injection drug user admissions to DPH funded treatment programs
+              per 100k persons in the year of 2011.
+      - name: alcohol_other_drug
+        format: ',.1f'
+        units: per 100k persons
+        unitsShort: /100k persons
+        label: Alcohol and other drug
+        desc: Alcohol and other drug related hospital discharges
+              per 100k persons in the year of 2009.
       - name: fertility
         label: Fertility rate
       - name: fertility_black
